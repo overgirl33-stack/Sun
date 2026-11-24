@@ -139,13 +139,20 @@ input.sq{display:block;width:100%;padding:10px 12px;border-radius:12px;border:2p
 <canvas id="bg"></canvas>
 <div id="app"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
+/* ---------- Firebase 설정 (공개되어도 안전한 웹 설정값. 비밀번호는 여기에 없어요) ---------- */
+const FB_CONFIG={apiKey:"",authDomain:"",databaseURL:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:""};
+const TEACHER_EMAIL="";   /* Firebase Authentication에 만든 교사 계정 이메일 (비밀번호는 Firebase에만 저장) */
+
 /* ---------- 유틸 ---------- */
 const app=document.getElementById('app');
 const rnd=seed=>{let s=seed%2147483647;if(s<=0)s+=2147483646;return()=>(s=s*16807%2147483647)/2147483647;};
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 const SAVE='starQuestV1';
-let S={unlocked:1,stars:[0,0,0,0,0],final:false,profile:null,char:0,coins:0,stk:[],cards:[],qa:{},att:[0,0,0,0,0]};
+let S={unlocked:1,stars:[0,0,0,0,0],final:false,profile:null,char:0,coins:0,stk:[],cards:[],qa:{},att:[0,0,0,0,0],resetSeen:0};
 try{const v=JSON.parse(localStorage.getItem(SAVE));if(v&&v.stars)S=Object.assign(S,v);}catch(e){}
 const save=()=>{try{localStorage.setItem(SAVE,JSON.stringify(S));}catch(e){}try{sync();}catch(e){}};
 
@@ -463,7 +470,7 @@ function home(){
   <button class="reset" id="rs">진행 상황 초기화</button><button class="reset" id="rl">역할 선택으로 돌아가기</button>`;
   app.querySelectorAll('.node[data-i]').forEach(b=>b.onclick=()=>stage(+b.dataset.i,0));
   document.getElementById('ed').onclick=()=>setup(false);document.getElementById('dx').onclick=dex;document.getElementById('rl').onclick=entry;document.getElementById('sc').onclick=()=>showCode(document.getElementById('sx'));updStat();const f=document.getElementById('fin');if(f&&all)f.onclick=()=>quiz('final');
-  document.getElementById('rs').onclick=()=>{if(document.getElementById('rs').dataset.s){S={unlocked:1,stars:[0,0,0,0,0],final:false,profile:S.profile,char:S.char,coins:0,stk:[],cards:S.cards,qa:{},att:[0,0,0,0,0]};save();home();}else{const r=document.getElementById('rs');r.dataset.s=1;r.textContent='정말 초기화할까요? 한 번 더 누르면 지워져요';}};
+  document.getElementById('rs').onclick=()=>{if(document.getElementById('rs').dataset.s){S={unlocked:1,stars:[0,0,0,0,0],final:false,profile:S.profile,char:S.char,coins:0,stk:[],cards:S.cards,qa:{},att:[0,0,0,0,0],resetSeen:S.resetSeen};save();home();}else{const r=document.getElementById('rs');r.dataset.s=1;r.textContent='정말 초기화할까요? 한 번 더 누르면 지워져요';}};
   scrollTo(0,0);
 }
 
@@ -529,24 +536,32 @@ function dex(){
 }
 
 /* ---------- 클라우드 동기화 / 교사·학생 ---------- */
-let DB=null,UID=null,SYNC='off',TU=null,TREM=[],TSEL=null,TQ='';
+let FBD=null,TAPP=null,TAUTH=null,TDB=null,UID=null,SYNC='off',TU=null,TREM=[],TSEL=null,TQ='',RESET_AT=0;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const FB_READY=()=>typeof firebase!=='undefined'&&!!(FB_CONFIG.apiKey&&FB_CONFIG.databaseURL&&TEACHER_EMAIL);
 async function initCloud(){
   try{
-    if(typeof claude==='undefined')return;
-    const u=await claude.use('user'),db=await claude.use('db');
-    if(u&&db){const id=await u.id();if(id){DB=db;UID=id;SYNC='ok';}}
-  }catch(e){}
-  if(DB&&S.profile)sync();
+    if(!FB_READY())return;
+    const a0=firebase.initializeApp(FB_CONFIG);FBD=firebase.database(a0);const au=firebase.auth(a0);
+    const u=await new Promise(res=>{const un=au.onAuthStateChanged(x=>{un();res(x);});});
+    UID=(u||(await au.signInAnonymously()).user).uid;SYNC='ok';
+    FBD.ref('meta/resetAt').on('value',sn=>{RESET_AT=sn.val()||0;handleReset();});
+  }catch(e){SYNC='err';}
+  if(UID&&S.profile)sync();
   updStat();
+}
+function handleReset(){
+  if(!RESET_AT||RESET_AT<=(S.resetSeen||0))return;
+  S.stars=[0,0,0,0,0];S.unlocked=1;S.final=false;S.coins=0;S.stk=[];S.cards=[];S.qa={};S.att=[0,0,0,0,0];S.resetSeen=RESET_AT;
+  save();if(document.getElementById('dx'))home();
 }
 const cloudReady=initCloud();
 const report=()=>({v:1,id:S.profile.id,name:S.profile.name,ch:S.char,stars:S.stars,coins:S.coins,fin:S.final,stk:S.stk,cards:S.cards.slice(0,60),qa:S.qa,att:S.att,t:Date.now()});
 let pushing=false,dirty=false,stimer=null;
-function sync(){if(!DB||!S.profile)return;dirty=true;clearTimeout(stimer);stimer=setTimeout(doPush,1500);}
+function sync(){if(!FBD||!UID||!S.profile)return;dirty=true;clearTimeout(stimer);stimer=setTimeout(doPush,1500);}
 async function doPush(){
   if(pushing||!dirty)return;pushing=true;dirty=false;
-  try{await DB.doc('students/'+UID).set(report());SYNC='ok';}catch(e){SYNC='err';}
+  try{await FBD.ref('students/'+UID).set(report());SYNC='ok';}catch(e){SYNC='err';}
   pushing=false;updStat();if(dirty)sync();
 }
 function updStat(){
@@ -574,9 +589,6 @@ function clean(r){
   const cards=(Array.isArray(r.cards)?r.cards:[]).filter(c=>c&&typeof c==='object').slice(0,60).map(c=>({n:String(c.n||'').slice(0,20),t:String(c.t||'별').slice(0,4),m:(c.m===null||c.m===undefined||!Number.isFinite(+c.m))?null:+c.m,ly:(Number.isFinite(+c.ly)&&+c.ly>0)?+c.ly:null,note:String(c.note||'').slice(0,60),s:0}));
   return {id,name,ch:I(r.ch)%4,stars,att,qa,cards,coins:I(r.coins),fin:!!r.fin,stk:(Array.isArray(r.stk)?r.stk:[]).slice(0,16).map(x=>String(x).slice(0,4)),t:n(r.t)};
 }
-async function isTeacher(){
-  try{if(typeof claude==='undefined')return false;const u=await claude.use('user');if(!u)return false;return !!((await u.canEdit())||(await u.isOwner()));}catch(e){return false;}
-}
 const ago=t=>{if(!t)return '기록 없음';const m=(Date.now()-t)/60000;return m<1?'방금':m<60?Math.floor(m)+'분 전':m<1440?Math.floor(m/60)+'시간 전':Math.floor(m/1440)+'일 전';};
 function qStage(i){let a=i;for(let s=0;s<QZ.length;s++){if(a<QZ[s].length)return s;a-=QZ[s].length;}return 4;}
 const IMPK='starQuestTeacherV1';
@@ -584,23 +596,45 @@ const getImp=()=>{try{return JSON.parse(localStorage.getItem(IMPK))||{};}catch(e
 const setImp=o=>{try{localStorage.setItem(IMPK,JSON.stringify(o));}catch(e){}};
 
 function stopT(){if(TU){try{TU();}catch(e){}TU=null;}}
+function teacherOut(){try{if(TAUTH)TAUTH.signOut();}catch(e){}TDB=null;}
 function entry(){
-  stopT();
+  stopT();teacherOut();
   app.innerHTML=`<div class="center"><div class="logo jua" style="font-size:32px;margin-top:10px">🚀 별빛 탐험대</div><p class="sub">중3 과학 · 별과 우주</p><div class="lrow" style="justify-content:center">${astro('happy',100)}${starC('happy',64)}</div></div>
   <button class="btn" id="e1" style="padding:20px;font-size:18px">🧑‍🎓 학생으로 시작하기</button>
   <button class="btn ghost" id="e2" style="padding:20px;font-size:18px">👩‍🏫 교사 모드</button>
-  <div class="err" id="er"></div><p class="small center">교사 모드는 이 앱의 편집 권한이 있는 선생님 계정에서만 열려요.</p>`;
+  <div class="err" id="er"></div><p class="small center">교사 모드는 교사 비밀번호가 있어야 들어갈 수 있어요.</p>`;
   const er=document.getElementById('er');
   document.getElementById('e1').onclick=async()=>{
     er.textContent='불러오는 중…';await Promise.race([cloudReady,sleep(4000)]);
-    if(!S.profile&&DB){try{const d=await DB.doc('students/'+UID).get();if(d.exists){adopt(d.data());save();return home();}}catch(e){}}
     S.profile?home():setup(true);
   };
-  document.getElementById('e2').onclick=async()=>{
-    er.textContent='권한 확인 중…';
-    if(!(await isTeacher())){er.textContent='교사 권한이 없어요. 앱 소유자 또는 편집 권한이 있는 계정으로 열어 주세요.';return;}
-    await Promise.race([cloudReady,sleep(4000)]);teacher();
+  document.getElementById('e2').onclick=()=>gate();
+  scrollTo(0,0);
+}
+
+function gate(){
+  stopT();
+  app.innerHTML=`<div class="top"><button class="back" id="bk">← 뒤로</button><div class="jua" style="font-size:18px">👩‍🏫 교사 모드</div><div style="width:48px"></div></div>
+  <div class="card center"><div style="font-size:44px">🔒</div><h3>교사 비밀번호</h3><p class="small">비밀번호를 입력해야 학생 기록을 볼 수 있어요.</p>
+  <input class="sq" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" style="text-align:center;margin-top:10px"><div class="err" id="er"></div><button class="btn" id="gi">입장하기</button></div>`;
+  document.getElementById('bk').onclick=entry;
+  const er=document.getElementById('er'),pw=document.getElementById('pw'),gi=document.getElementById('gi');
+  const go=async()=>{
+    if(!FB_READY()){er.textContent='Firebase 설정이 아직 안 되어 있거나 인터넷에 연결되지 않았어요.';return;}
+    const v=pw.value;if(!v){er.textContent='비밀번호를 입력해 주세요.';return;}
+    gi.disabled=true;er.textContent='확인 중…';
+    try{
+      if(!TAPP){TAPP=firebase.initializeApp(FB_CONFIG,'teacher');TAUTH=firebase.auth(TAPP);await TAUTH.setPersistence(firebase.auth.Auth.Persistence.NONE);}
+      TAUTH=firebase.auth(TAPP);TDB=firebase.database(TAPP);
+      await TAUTH.signInWithEmailAndPassword(TEACHER_EMAIL,v);
+      pw.value='';teacher();
+    }catch(e){
+      const c=(e&&e.code)||'';TDB=null;
+      er.textContent=/wrong-password|invalid-credential|invalid-login|user-not-found|invalid-email/.test(c)?'비밀번호가 맞지 않아요.':c==='auth/too-many-requests'?'시도가 너무 많아요. 잠시 후 다시 해 주세요.':c==='auth/network-request-failed'?'인터넷 연결을 확인해 주세요.':'로그인 오류: '+(c||'알 수 없음');
+      gi.disabled=false;
+    }
   };
+  gi.onclick=go;pw.onkeydown=e=>{if(e.key==='Enter')go();};
   scrollTo(0,0);
 }
 
@@ -618,6 +652,7 @@ function teacher(){
   <div id="tsum"></div>
   <div class="card"><h3>👩‍🎓 학생 현황</h3><input class="sq" id="tq" placeholder="🔍 학번·이름 검색"><div id="tl"></div></div>
   <div class="card"><h3>❓ 많이 틀린 문제 TOP 5</h3><div id="tw"></div></div>
+  <div class="card" style="border-color:var(--bad)"><h3 style="color:var(--bad)">⚠️ 전체 학생 초기화</h3><p class="small">모든 학생 기록을 삭제하고, 학생 기기의 진행 상황(별·코인·도감·스티커)도 초기화해요. 학번·이름은 유지돼요. 되돌릴 수 없어요.</p><button class="btn ghost" id="rz">초기화 시작</button><div id="rzx"></div></div>
   <div class="card"><h3>📥 학생 제출 코드 가져오기</h3><p class="small">자동 전송이 안 되는 학생은 '제출 코드'를 메신저로 보내요. 여러 개를 한꺼번에 붙여넣어도 돼요.</p><textarea class="ta" id="imp" style="height:80px" placeholder="STAR1:..."></textarea><button class="btn ghost" id="imb">가져오기</button><div id="imm" class="small"></div></div>
   <button class="btn ghost" id="tcp">📋 전체 결과 복사 (엑셀·시트에 붙여넣기)</button><div id="tx"></div>`;
   document.getElementById('bk').onclick=entry;
@@ -642,17 +677,29 @@ function teacher(){
     try{navigator.clipboard.writeText(t).then(()=>{document.getElementById('tcm').textContent='✅ 복사되었어요!';},()=>{});}catch(e){}
   };
   const st=t=>{const e=document.getElementById('ts');if(e)e.textContent=t;};
-  if(!DB){st('☁️ 연결 안 됨');}
+  if(!TDB){st('☁️ 연결 안 됨');}
   else{
-    st('연결 중…');const tm=setTimeout(()=>st('연결이 느려요…'),10000);
-    TU=DB.collection('students').onSnapshot(sn=>{clearTimeout(tm);TREM=sn.docs.map(d=>Object.assign({},d.data(),{_doc:d.id}));st('🟢 실시간 연결');tRender();},e=>{clearTimeout(tm);st('⚠️ 불러오기 실패');});
+    st('연결 중…');const ref=TDB.ref('students');
+    const cb=sn=>{TREM=[];sn.forEach(c=>{TREM.push(Object.assign({},c.val(),{_doc:c.key}));});st('🟢 실시간 연결');tRender();};
+    ref.on('value',cb,e=>{st('⚠️ 불러오기 실패');});
+    TU=()=>ref.off('value',cb);
   }
+  document.getElementById('rz').onclick=()=>{
+    const x=document.getElementById('rzx');
+    x.innerHTML='<p class="small" style="margin-top:8px">계속하려면 아래 칸에 <b>초기화</b> 라고 입력하세요.</p><input class="sq" id="rzi" placeholder="초기화"><button class="btn" id="rzg" style="background:linear-gradient(180deg,#ff8aa0,#ff3d6e);box-shadow:0 4px 0 #99183a;color:#fff">⚠️ 모든 학생 초기화 실행</button><div class="small" id="rzm"></div>';
+    document.getElementById('rzg').onclick=async()=>{
+      const m=document.getElementById('rzm');
+      if(document.getElementById('rzi').value.trim()!=='초기화'){m.textContent='"초기화"를 정확히 입력해 주세요.';return;}
+      try{await TDB.ref('students').remove();await TDB.ref('meta/resetAt').set(firebase.database.ServerValue.TIMESTAMP);setImp({});TREM=[];TSEL=null;tRender();x.innerHTML='<div class="reward">✅ 모든 학생이 초기화되었어요.</div>';}
+      catch(e){m.textContent='초기화 실패: '+((e&&e.code)||'권한 또는 연결을 확인하세요');}
+    };
+  };
   tRender();scrollTo(0,0);
 }
 async function tDelete(k){
   const r=allStudents().find(x=>x.id===k);if(!r)return;
   const imp=getImp();delete imp[k];setImp(imp);
-  if(r._doc&&DB){try{await DB.doc('students/'+r._doc).delete();TREM=TREM.filter(d=>d._doc!==r._doc);}catch(e){}}
+  if(r._doc&&TDB){try{await TDB.ref('students/'+r._doc).remove();TREM=TREM.filter(d=>d._doc!==r._doc);}catch(e){}}
   TSEL=null;tRender();
 }
 function tRender(){
@@ -690,7 +737,7 @@ function setup(first){
     const id=document.getElementById('pid').value.trim(),nm=document.getElementById('pnm').value.trim(),er=document.getElementById('err');
     if(!/^\d{3,8}$/.test(id)){er.textContent='학번은 숫자 3~8자리로 입력해 주세요.';return;}
     if(!nm){er.textContent='이름을 입력해 주세요.';return;}
-    S.profile={id,name:nm};S.char=sel;save();home();
+    S.profile={id,name:nm};S.char=sel;S.resetSeen=Math.max(S.resetSeen||0,RESET_AT);save();home();
   };
   document.getElementById('cn').onclick=first?entry:home;
   scrollTo(0,0);
