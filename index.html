@@ -465,11 +465,11 @@ function home(){
   <button class="btn mint" id="dx" style="margin:0 0 12px">📖 내 별 도감 보기 (${S.cards.length}장)</button>
   <div class="map">${ST.map((s,i)=>{const lock=false,st=S.stars[i];return `<button class="node ${lock?'lock':''}" data-i="${i}" ${lock?'disabled':''}><div class="planet" style="--a:${s.c[0]};--b:${s.c[1]}">${lock?'🔒':s.ic}</div><div class="ninfo"><small>STAGE ${i+1}</small><b>${s.n}</b><span>${s.t}</span><div class="stars">${'★'.repeat(st)+'☆'.repeat(3-st)}</div></div></button>`;}).join('')}
   <button class="node ${all?'':'lock'}" id="fin" ${all?'':'disabled'}><div class="planet" style="--a:#fff3b0;--b:#ffb82e">${all?'🏅':'🔒'}</div><div class="ninfo"><small>FINAL</small><b>우주 졸업 시험</b><span>${S.final?'🎓 졸업 완료! 다시 도전하기':'5개 행성을 모두 클리어하면 열려요'}</span></div></button></div>
-  <div class="card"><h3>📤 선생님께 제출</h3><p class="small" id="syn"></p><button class="btn ghost" id="sc" style="margin-top:6px">📋 제출 코드 만들기</button><div id="sx"></div></div>
+  <div class="card"><h3>📤 선생님께 제출하기</h3><p class="small">버튼 한 번이면 지금까지의 기록이 선생님께 바로 전달돼요.</p><button class="btn mint" id="sc">📤 제출하기</button><div class="small center" id="sx" style="margin-top:8px"></div></div>
   <div class="card"><h3>🎒 내 스티커 보관함 (${S.stk.length}/${STK.length})</h3><p class="small">문제를 맞히면 코인과 스티커를 받아요!</p><div class="stk">${STK.map(x=>`<span class="${S.stk.includes(x)?'':'no'}">${x}</span>`).join('')}</div></div>
   <button class="reset" id="rs">진행 상황 초기화</button><button class="reset" id="rl">역할 선택으로 돌아가기</button>`;
   app.querySelectorAll('.node[data-i]').forEach(b=>b.onclick=()=>stage(+b.dataset.i,0));
-  document.getElementById('ed').onclick=()=>setup(false);document.getElementById('dx').onclick=dex;document.getElementById('rl').onclick=entry;document.getElementById('sc').onclick=()=>showCode(document.getElementById('sx'));updStat();const f=document.getElementById('fin');if(f&&all)f.onclick=()=>quiz('final');
+  document.getElementById('ed').onclick=()=>setup(false);document.getElementById('dx').onclick=dex;document.getElementById('rl').onclick=entry;document.getElementById('sc').onclick=e=>submitNow(e.target,document.getElementById('sx'));updStat();const f=document.getElementById('fin');if(f&&all)f.onclick=()=>quiz('final');
   document.getElementById('rs').onclick=()=>{if(document.getElementById('rs').dataset.s){S={unlocked:1,stars:[0,0,0,0,0],final:false,profile:S.profile,char:S.char,coins:0,stk:[],cards:S.cards,qa:{},att:[0,0,0,0,0],resetSeen:S.resetSeen};save();home();}else{const r=document.getElementById('rs');r.dataset.s=1;r.textContent='정말 초기화할까요? 한 번 더 누르면 지워져요';}};
   scrollTo(0,0);
 }
@@ -556,7 +556,7 @@ function handleReset(){
   save();if(document.getElementById('dx'))home();
 }
 const cloudReady=initCloud();
-const report=()=>({v:1,id:S.profile.id,name:S.profile.name,ch:S.char,stars:S.stars,coins:S.coins,fin:S.final,stk:S.stk,cards:S.cards.slice(0,60),qa:S.qa,att:S.att,t:Date.now()});
+const report=()=>({v:1,sub:S.sub||0,id:S.profile.id,name:S.profile.name,ch:S.char,stars:S.stars,coins:S.coins,fin:S.final,stk:S.stk,cards:S.cards.slice(0,60),qa:S.qa,att:S.att,t:Date.now()});
 let pushing=false,dirty=false,stimer=null;
 function sync(){if(!FBD||!UID||!S.profile)return;dirty=true;clearTimeout(stimer);stimer=setTimeout(doPush,1500);}
 async function doPush(){
@@ -569,6 +569,19 @@ function updStat(){
   e.innerHTML=SYNC==='ok'?'✅ 학습 기록이 선생님 화면에 <b>자동 전송</b>되고 있어요.':SYNC==='err'?'⚠️ 자동 전송에 문제가 있어요. 아래 <b>제출 코드</b>를 선생님께 보내 주세요.':'ℹ️ 지금은 자동 전송을 쓸 수 없어요. 아래 <b>제출 코드</b>를 선생님께 보내 주세요.';
 }
 const enc=r=>'STAR1:'+btoa(unescape(encodeURIComponent(JSON.stringify(r))));
+async function submitNow(btn,msg){
+  if(!S.profile)return;
+  btn.disabled=true;const old=btn.textContent;btn.textContent='보내는 중…';msg.textContent='';
+  try{
+    await Promise.race([cloudReady,sleep(5000)]);
+    if(!FBD||!UID)throw 0;
+    S.sub=Date.now();save();
+    await Promise.race([FBD.ref('students/'+UID).set(report()),sleep(8000).then(()=>{throw 0;})]);
+    msg.innerHTML='✅ <b>제출 완료!</b> '+new Date(S.sub).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+'에 선생님께 전달됐어요.';
+    btn.textContent='✅ 제출 완료 (다시 제출하기)';
+  }catch(e){msg.innerHTML='⚠️ 지금은 보낼 수 없어요. 인터넷 연결을 확인하고 다시 눌러 주세요.';btn.textContent=old;}
+  btn.disabled=false;
+}
 function showCode(el){
   const t=enc(report());
   el.innerHTML=`<textarea class="ta" readonly style="height:110px"></textarea><p class="small" id="cm2">길게 눌러 복사해서 선생님께 메신저로 보내 주세요.</p>`;
@@ -587,7 +600,7 @@ function clean(r){
   const stars=[0,1,2,3,4].map(i=>Math.min(3,I(r.stars&&r.stars[i]))),att=[0,1,2,3,4].map(i=>I(r.att&&r.att[i]));
   const qa={};if(r.qa&&typeof r.qa==='object')for(const k of Object.keys(r.qa)){const i=+k,v=r.qa[k];if(Number.isInteger(i)&&i>=0&&i<ALL.length&&Array.isArray(v))qa[i]=[I(v[0]),I(v[1])];}
   const cards=(Array.isArray(r.cards)?r.cards:[]).filter(c=>c&&typeof c==='object').slice(0,60).map(c=>({n:String(c.n||'').slice(0,20),t:String(c.t||'별').slice(0,4),m:(c.m===null||c.m===undefined||!Number.isFinite(+c.m))?null:+c.m,ly:(Number.isFinite(+c.ly)&&+c.ly>0)?+c.ly:null,note:String(c.note||'').slice(0,60),s:0}));
-  return {id,name,ch:I(r.ch)%4,stars,att,qa,cards,coins:I(r.coins),fin:!!r.fin,stk:(Array.isArray(r.stk)?r.stk:[]).slice(0,16).map(x=>String(x).slice(0,4)),t:n(r.t)};
+  return {id,name,ch:I(r.ch)%4,stars,att,qa,cards,coins:I(r.coins),fin:!!r.fin,stk:(Array.isArray(r.stk)?r.stk:[]).slice(0,16).map(x=>String(x).slice(0,4)),t:n(r.t),sub:n(r.sub)};
 }
 const ago=t=>{if(!t)return '기록 없음';const m=(Date.now()-t)/60000;return m<1?'방금':m<60?Math.floor(m)+'분 전':m<1440?Math.floor(m/60)+'시간 전':Math.floor(m/1440)+'일 전';};
 function qStage(i){let a=i;for(let s=0;s<QZ.length;s++){if(a<QZ[s].length)return s;a-=QZ[s].length;}return 4;}
@@ -670,7 +683,6 @@ function teacher(){
   <div class="card"><h3>👩‍🎓 학생 현황</h3><input class="sq" id="tq" placeholder="🔍 학번·이름 검색"><div id="tl"></div></div>
   <div class="card"><h3>❓ 많이 틀린 문제 TOP 5</h3><div id="tw"></div></div>
   <div class="card" style="border-color:var(--bad)"><h3 style="color:var(--bad)">⚠️ 전체 학생 초기화</h3><p class="small">모든 학생 기록을 삭제하고, 학생 기기의 진행 상황(별·코인·도감·스티커)도 초기화해요. 학번·이름은 유지돼요. 되돌릴 수 없어요.</p><button class="btn ghost" id="rz">초기화 시작</button><div id="rzx"></div></div>
-  <div class="card"><h3>📥 학생 제출 코드 가져오기</h3><p class="small">자동 전송이 안 되는 학생은 '제출 코드'를 메신저로 보내요. 여러 개를 한꺼번에 붙여넣어도 돼요.</p><textarea class="ta" id="imp" style="height:80px" placeholder="STAR1:..."></textarea><button class="btn ghost" id="imb">가져오기</button><div id="imm" class="small"></div></div>
   <button class="btn ghost" id="tcp">📋 전체 결과 복사 (엑셀·시트에 붙여넣기)</button><div id="tx"></div>`;
   document.getElementById('bk').onclick=entry;
   document.getElementById('tq').oninput=e=>{TQ=e.target.value.trim();tRender();};
@@ -679,12 +691,6 @@ function teacher(){
     if(del){if(!del.dataset.s){del.dataset.s=1;del.textContent='정말 삭제? 한 번 더';return;}tDelete(del.dataset.k);return;}
     if(e.target.closest('.dd'))return;
     const row=e.target.closest('.srow');if(row){TSEL=TSEL===row.dataset.k?null:row.dataset.k;tRender();}
-  };
-  document.getElementById('imb').onclick=()=>{
-    const t=document.getElementById('imp').value,re=/STAR1:([A-Za-z0-9+\/=]+)/g;let m,ok=0,bad=0;const imp=getImp();
-    while((m=re.exec(t))){try{const r=clean(JSON.parse(decodeURIComponent(escape(atob(m[1])))));if(r){imp[r.id]=r;ok++;}else bad++;}catch(e){bad++;}}
-    setImp(imp);document.getElementById('imm').textContent=ok||bad?`✅ ${ok}명 가져왔어요${bad?` · 읽지 못한 코드 ${bad}개`:''}`:'붙여넣은 코드가 없어요.';
-    if(ok)document.getElementById('imp').value='';tRender();
   };
   document.getElementById('tcp').onclick=()=>{
     const L=allStudents(),H=['학번','이름','★합계(15)','1단원★','2단원★','3단원★','4단원★','5단원★','코인','도감 카드','졸업','최근 활동'];
@@ -723,7 +729,7 @@ function tRender(){
   const tl=document.getElementById('tl');if(!tl)return;
   const L=allStudents(),n=L.length;
   const avg=n?(L.reduce((a,r)=>a+sum3(r),0)/n).toFixed(1):'0',grad=L.filter(r=>r.fin).length,act=L.filter(r=>Date.now()-r.t<600000).length,cards=n?(L.reduce((a,r)=>a+r.cards.length,0)/n).toFixed(1):'0';
-  document.getElementById('tsum').innerHTML=`<div class="sg"><div><b>${n}</b>학생 수</div><div><b>${avg}</b>평균 ★ (15점 만점)</div><div><b>${grad}</b>졸업 완료</div><div><b>${act}</b>10분 내 활동 중</div></div><p class="small center">학생당 평균 별 도감 카드 ${cards}장</p>`;
+  document.getElementById('tsum').innerHTML=`<div class="sg"><div><b>${n}</b>학생 수</div><div><b>${avg}</b>평균 ★ (15점 만점)</div><div><b>${grad}</b>졸업 완료</div><div><b>${act}</b>10분 내 활동 중</div></div><p class="small center">📤 제출한 학생 ${L.filter(r=>r.sub).length}명 · 학생당 평균 별 도감 카드 ${cards}장</p>`;
   const q=TQ.toLowerCase(),F=L.filter(r=>!q||r.id.toLowerCase().includes(q)||r.name.toLowerCase().includes(q));
   tl.innerHTML=F.length?F.map(r=>{
     const open=TSEL===r.id;
@@ -735,7 +741,7 @@ function tRender(){
       <p style="margin-top:8px"><b>📖 별 도감 카드 (${r.cards.length}장)</b></p>${r.cards.length?r.cards.map(c=>{const k=dcalc(c.m,c.ly);return `<div class="dexc" style="margin:6px 0;padding:8px 10px"><b>${TIC[c.t]||'⭐'} ${esc(c.n)}</b> <span class="small">${esc(c.t)}${c.m!==null?` · 겉보기 ${c.m}등급`:''}${c.ly?` · ${c.ly}광년`:''}${k.M!==undefined&&c.t==='별'?` · 절대 ${fnum(k.M)}`:''}</span>${c.note?`<div class="nt">📝 ${esc(c.note)}</div>`:''}</div>`;}).join(''):'<p class="small">아직 없어요.</p>'}
       <button class="del tdel" data-k="${esc(r.id)}" style="margin-top:8px">🗑 이 학생 기록 삭제</button></div>`;
     }
-    return `<div class="srow ${open?'op':''}" data-k="${esc(r.id)}"><div class="sh"><span><b>${esc(r.id)}</b> ${esc(r.name)} ${r.fin?'🎓':''}</span><span class="hl">★ ${sum3(r)}/15</span></div><div class="chips">${r.stars.map((x,i)=>`<i class="sc s${x}">${i+1}</i>`).join('')}</div><div class="small">🪙 ${r.coins} · 📖 ${r.cards.length}장 · ${ago(r.t)} ${r.src}</div>${det}</div>`;
+    return `<div class="srow ${open?'op':''}" data-k="${esc(r.id)}"><div class="sh"><span><b>${esc(r.id)}</b> ${esc(r.name)} ${r.fin?'🎓':''}</span><span class="hl">★ ${sum3(r)}/15</span></div><div class="chips">${r.stars.map((x,i)=>`<i class="sc s${x}">${i+1}</i>`).join('')}</div><div class="small">🪙 ${r.coins} · 📖 ${r.cards.length}장 · ${ago(r.t)}${r.sub?` · <b style="color:var(--mint)">📤 제출 ${new Date(r.sub).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}</b>`:''}</div>${det}</div>`;
   }).join(''):'<p class="small center">아직 학생 기록이 없어요. 학생이 활동하면 여기에 나타나요.</p>';
   const agg={};for(const r of L)for(const k of Object.keys(r.qa)){const a=agg[k]||(agg[k]=[0,0]);a[0]+=r.qa[k][0];a[1]+=r.qa[k][1];}
   const top=Object.keys(agg).map(k=>[+k,agg[k]]).filter(x=>x[1][0]>0).sort((a,b)=>b[1][0]-a[1][0]).slice(0,5);
@@ -793,16 +799,16 @@ function qrender(){
 function pass(){
   const s=Q.src,who=`${S.profile.id} ${S.profile.name}`;
   if(s==='final'){const first=!S.final;if(first)S.coins+=100;S.final=true;save();
-    app.innerHTML=`<div class="center"><div class="badge">🏅</div><h2 class="jua" style="font-size:30px;margin:14px 0 4px;color:var(--gold)">우주 졸업을 축하해요!</h2><p><b>${esc(who)}</b> 탐험대원은<br>별의 거리부터 빅뱅까지 모든 행성을 정복했습니다 🎓</p>${first?'<div class="reward">🎁 졸업 보너스 🪙 +100</div>':''}<div class="lrow" style="justify-content:center">${lumi('happy',100)}</div></div><div class="card"><h3>📤 선생님께 제출하기</h3><p class="small">오늘 기록을 선생님께 보내요. 버튼을 눌러 나온 코드를 복사해서 선생님께 보내 주세요.</p><button class="btn ghost" id="sc2" style="margin-top:6px">📋 제출 코드 만들기</button><div id="sx2"></div></div><button class="btn" id="hm">🗺️ 지도로 돌아가기</button>`;
-    document.getElementById('sc2').onclick=()=>showCode(document.getElementById('sx2'));document.getElementById('hm').onclick=home;scrollTo(0,0);return;}
+    app.innerHTML=`<div class="center"><div class="badge">🏅</div><h2 class="jua" style="font-size:30px;margin:14px 0 4px;color:var(--gold)">우주 졸업을 축하해요!</h2><p><b>${esc(who)}</b> 탐험대원은<br>별의 거리부터 빅뱅까지 모든 행성을 정복했습니다 🎓</p>${first?'<div class="reward">🎁 졸업 보너스 🪙 +100</div>':''}<div class="lrow" style="justify-content:center">${lumi('happy',100)}</div></div><div class="card"><h3>📤 선생님께 제출하기</h3><p class="small">버튼 한 번이면 지금까지의 기록이 선생님께 바로 전달돼요.</p><button class="btn mint" id="sc2">📤 제출하기</button><div class="small center" id="sx2" style="margin-top:8px"></div></div><button class="btn" id="hm">🗺️ 지도로 돌아가기</button>`;
+    document.getElementById('sc2').onclick=e=>submitNow(e.target,document.getElementById('sx2'));document.getElementById('hm').onclick=home;scrollTo(0,0);return;}
   const stars=Q.wrong===0?3:Q.wrong<=2?2:1,old=S.stars[s];let bonus=0;
   if(old===0)bonus+=30;if(stars===3&&old<3)bonus+=20;
   S.stars[s]=Math.max(old,stars);S.unlocked=Math.max(S.unlocked,s+2);S.coins+=bonus;save();
   app.innerHTML=`<div class="center">${lumi('happy',110)}<h2 class="jua" style="font-size:28px;margin-top:6px">${ST[s].n} 탐험 성공! 🎉</h2><div class="bigstars">${'★'.repeat(stars)+'☆'.repeat(3-stars)}</div><p class="small">오답 ${Q.wrong}번 · ${stars===3?'완벽해요!':stars===2?'아주 잘했어요!':'다음엔 별 3개에 도전!'}</p>${bonus?`<div class="reward">🎁 행성 클리어 보너스 🪙 +${bonus}</div>`:''}</div>
   <div class="card"><h3>📌 오늘 얻은 지식</h3><p>${ST[s].sum}</p></div>
-  <div class="card"><h3>📤 선생님께 제출하기</h3><p class="small">오늘 기록을 선생님께 보내요. 버튼을 눌러 나온 코드를 복사해서 선생님께 보내 주세요.</p><button class="btn ghost" id="sc2" style="margin-top:6px">📋 제출 코드 만들기</button><div id="sx2"></div></div>
+  <div class="card"><h3>📤 선생님께 제출하기</h3><p class="small">버튼 한 번이면 지금까지의 기록이 선생님께 바로 전달돼요.</p><button class="btn mint" id="sc2">📤 제출하기</button><div class="small center" id="sx2" style="margin-top:8px"></div></div>
   <button class="btn" id="go">${s<4?'다음 행성으로 🚀':'지도로 가서 졸업 시험 도전 🏅'}</button><button class="btn ghost" id="hm">🗺️ 지도로</button>`;
-  document.getElementById('sc2').onclick=()=>showCode(document.getElementById('sx2'));document.getElementById('go').onclick=()=>s<4?stage(s+1,0):home();document.getElementById('hm').onclick=home;scrollTo(0,0);
+  document.getElementById('sc2').onclick=e=>submitNow(e.target,document.getElementById('sx2'));document.getElementById('go').onclick=()=>s<4?stage(s+1,0):home();document.getElementById('hm').onclick=home;scrollTo(0,0);
 }
 
 if(location.hash==='#teacher'){entry();document.getElementById('e2').click();}else S.profile?home():entry();
