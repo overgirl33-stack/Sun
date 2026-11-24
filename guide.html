@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>별빛 탐험대 · 수업 안내 — 중3 과학 Ⅷ. 별과 우주</title>
+<meta name="description" content="학생은 우주를 탐험하고, 교사는 관제센터에서 지켜봅니다. 중학교 3학년 별과 우주 단원 게임형 수업 사이트 안내.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04061a;--ink:#eef2ff;--sub:#9fb0e8;--line:rgba(140,160,255,.18);--glass:rgba(20,28,80,.45);--gold:#ffd54a;--mint:#7fffd4;--pink:#ff8fb1;--violet:#b48cff;--blue:#6aa8ff;--orange:#ff9a52}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,sans-serif;line-height:1.7;overflow-x:hidden}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+.neb{position:fixed;inset:-20%;z-index:0;pointer-events:none;background:radial-gradient(40% 30% at 15% 10%,rgba(120,80,255,.22),transparent 70%),radial-gradient(35% 30% at 85% 30%,rgba(255,110,170,.13),transparent 70%),radial-gradient(45% 35% at 50% 100%,rgba(60,140,255,.16),transparent 70%)}
+main,nav,footer{position:relative;z-index:1}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+h1,h2,h3,.jua{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;letter-spacing:-.01em}
+/* nav */
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(4,6,26,.6);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:18px;height:62px}
+.brand{display:flex;align-items:center;gap:8px;font-family:'Jua';font-size:21px;color:var(--gold);text-decoration:none;white-space:nowrap}
+.links{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.links::-webkit-scrollbar{display:none}
+.links a{padding:7px 12px;border-radius:99px;text-decoration:none;color:var(--sub);font-size:14px;font-weight:500;white-space:nowrap;transition:.2s}
+.links a:hover,.links a.on{color:#fff;background:rgba(255,255,255,.08)}
+.navcta{padding:8px 16px;border-radius:99px;background:var(--gold);color:#251a00;font-weight:700;text-decoration:none;font-size:14px;white-space:nowrap}
+@media(max-width:760px){.links{display:none}.navcta{margin-left:auto}}
+/* hero */
+.hero{padding:70px 0 40px;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:40px}}
+.badge{display:inline-flex;gap:8px;align-items:center;padding:6px 14px;border:1px solid var(--line);border-radius:99px;background:var(--glass);font-size:13px;color:var(--sub)}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+.hero h1{font-size:clamp(40px,6.4vw,76px);line-height:1.12;margin:18px 0 18px}
+.grad{background:linear-gradient(100deg,var(--gold),var(--pink) 45%,var(--violet) 75%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:#cfd8ff;max-width:560px}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 18px}
+.b{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border-radius:16px;font-weight:700;text-decoration:none;font-size:16px;transition:transform .2s,box-shadow .2s}
+.b:hover{transform:translateY(-2px)}
+.b.p{background:linear-gradient(180deg,#ffe27a,#ffb82e);color:#2a1d00;box-shadow:0 8px 30px rgba(255,184,46,.35)}
+.b.g{border:1px solid var(--line);background:var(--glass);color:#fff}
+.addr{font-size:14px;color:var(--sub)}.addr b{color:var(--mint)}
+/* phone */
+.stage{position:relative;display:flex;justify-content:center;min-height:560px}
+.orbit{position:absolute;border:1px dashed rgba(160,180,255,.22);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.orbit .pl{position:absolute;top:-11px;left:50%;width:22px;height:22px;border-radius:50%;margin-left:-11px}
+.o1{width:440px;height:440px;animation:spin 26s linear infinite}.o2{width:560px;height:560px;animation:spin 40s linear infinite reverse}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.phone{position:relative;width:300px;height:600px;border-radius:44px;padding:12px;background:linear-gradient(160deg,#2a3270,#0c1036);box-shadow:0 0 0 2px rgba(255,255,255,.08),0 40px 90px rgba(0,0,0,.6),0 0 80px rgba(120,100,255,.25);z-index:2}
+.phone::before{content:'';position:absolute;top:20px;left:50%;width:90px;height:22px;margin-left:-45px;border-radius:20px;background:#05071a;z-index:3}
+.phone iframe{width:100%;height:100%;border:0;border-radius:34px;background:#070b22}
+.tag{position:absolute;z-index:3;background:rgba(10,14,50,.85);border:1px solid var(--line);border-radius:14px;padding:8px 12px;font-size:13px;backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.4);animation:bob 4s ease-in-out infinite}
+.tag b{color:var(--gold)}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.t1{left:0;top:80px}.t2{right:0;top:230px;animation-delay:-1.3s}.t3{left:10px;bottom:70px;animation-delay:-2.6s}
+@media(max-width:600px){.o1,.o2{display:none}.tag{display:none}}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:30px 0 10px}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{padding:18px 14px;border:1px solid var(--line);border-radius:18px;background:var(--glass);text-align:center}
+.stat b{display:block;font-family:'Jua';font-weight:400;font-size:40px;line-height:1.1;background:linear-gradient(180deg,#fff,#9fb0e8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{color:var(--sub);font-size:13px}
+/* sections */
+section{padding:90px 0}
+.kick{color:var(--mint);font-weight:700;font-size:13px;letter-spacing:.18em}
+h2{font-size:clamp(30px,4.4vw,48px);line-height:1.2;margin:8px 0 14px}
+.sec-lead{color:#cfd8ff;max-width:680px;font-size:17px}
+.card{border:1px solid var(--line);border-radius:22px;background:var(--glass);backdrop-filter:blur(6px);padding:22px}
+.grid{display:grid;gap:14px}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s,transform .8s}
+.reveal.in{opacity:1;transform:none}
+/* flow */
+.flow{grid-template-columns:repeat(5,1fr);margin-top:36px;counter-reset:f}
+@media(max-width:900px){.flow{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.flow{grid-template-columns:1fr}}
+.fstep{position:relative}
+.fstep .ic{font-size:34px}
+.fstep h3{font-size:21px;margin:8px 0 4px}
+.fstep p{margin:0;color:var(--sub);font-size:14px}
+.fstep .who{position:absolute;top:16px;right:16px;font-size:11px;padding:2px 9px;border-radius:99px;background:rgba(127,255,212,.12);color:var(--mint);font-weight:700}
+.fstep::after{counter-increment:f;content:counter(f,decimal-leading-zero);position:absolute;bottom:14px;right:18px;font-family:'Jua';font-size:34px;color:rgba(255,255,255,.07)}
+.fstep.lock{border-color:rgba(255,92,122,.45);background:linear-gradient(160deg,rgba(80,20,50,.5),rgba(20,28,80,.45))}
+.fstep.lock .who{background:rgba(255,92,122,.16);color:#ff8aa0}
+/* route */
+.route{position:relative;margin-top:40px}
+.track{position:absolute;left:39px;top:20px;bottom:20px;width:2px;background:linear-gradient(var(--gold),var(--pink),var(--violet),var(--blue),var(--orange));opacity:.5}
+@media(min-width:900px){.track{display:none}}
+.planets{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media(max-width:900px){.planets{grid-template-columns:1fr}}
+.pc{position:relative;overflow:hidden;cursor:pointer;transition:transform .3s,border-color .3s}
+.pc:hover{transform:translateY(-6px);border-color:rgba(255,213,74,.5)}
+.orb{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;font-size:34px;background:radial-gradient(circle at 30% 28%,var(--a),var(--b) 70%);box-shadow:0 0 34px var(--b),inset -8px -10px 18px rgba(0,0,0,.35);margin-bottom:14px}
+.pc small{color:var(--sub);letter-spacing:.14em;font-size:11px;font-weight:700}
+.pc h3{font-size:24px;margin:2px 0 6px}
+.pc .c{font-size:14px;color:#cfd8ff;margin:0 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:11.5px;padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--sub);background:rgba(255,255,255,.03)}
+.chip.y{color:var(--gold);border-color:rgba(255,213,74,.35)}
+.chip.m{color:var(--mint);border-color:rgba(127,255,212,.35)}
+.det{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:13.5px;color:#cfd8ff}
+.pc.open .det{display:block}
+.det ul{margin:4px 0;padding-left:18px}
+/* lab */
+.lab{grid-template-columns:1fr 1fr;margin-top:36px}
+@media(max-width:860px){.lab{grid-template-columns:1fr}}
+.lab canvas{width:100%;height:auto;display:block;border-radius:14px;background:#050824}
+.lab h3{font-size:22px;margin:0 0 4px}
+.lab p{color:var(--sub);font-size:14px;margin:0 0 12px}
+input[type=range]{width:100%;accent-color:var(--gold);height:28px}
+.read{margin-top:10px;padding:10px 14px;border-radius:12px;background:rgba(5,8,36,.7);border:1px dashed var(--line);font-size:14.5px}
+.read b{color:var(--mint)}
+/* reward */
+.rw{grid-template-columns:repeat(4,1fr);margin-top:36px}
+@media(max-width:860px){.rw{grid-template-columns:1fr 1fr}}
+.rw .big{font-size:42px}
+.rw h3{font-size:20px;margin:6px 0 2px}.rw p{margin:0;font-size:14px;color:var(--sub)}
+.crew{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.crew .m{width:118px;text-align:center;padding:12px 6px;border-radius:20px;border:1px solid var(--line);background:var(--glass);transition:transform .3s}
+.crew .m:hover{transform:translateY(-6px) rotate(-2deg)}
+.crew b{display:block;font-family:'Jua';font-weight:400;font-size:17px}.crew span{font-size:12px;color:var(--sub)}
+.gate{display:flex;gap:16px;align-items:center;margin-top:22px;padding:20px 24px;border-radius:22px;border:1px solid rgba(255,92,122,.4);background:linear-gradient(100deg,rgba(80,20,50,.55),rgba(20,28,80,.4))}
+.gate .ic{font-size:40px}.gate p{margin:0;color:#ffd6de}.gate b{color:#fff}
+/* control */
+.ctrl{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;margin-top:36px;align-items:start}
+@media(max-width:900px){.ctrl{grid-template-columns:1fr}}
+.dash{padding:18px;border-radius:24px;border:1px solid var(--line);background:linear-gradient(170deg,rgba(26,37,100,.75),rgba(8,12,40,.85));box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.live{font-size:12px;color:var(--mint);font-weight:700;display:flex;gap:6px;align-items:center}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--mint);animation:blink 1.2s infinite}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.kpi{padding:10px 6px;border-radius:14px;background:rgba(5,8,36,.6);border:1px solid var(--line);text-align:center}
+.kpi b{display:block;font-family:'Jua';font-weight:400;font-size:24px;color:var(--mint)}.kpi span{font-size:11px;color:var(--sub)}
+.srow{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:14px;background:rgba(5,8,36,.55);border:1px solid var(--line);margin-bottom:7px;font-size:13.5px;transition:background .4s}
+.srow.flash{background:rgba(127,255,212,.16)}
+.srow .nm{min-width:96px;font-weight:700}
+.sc{display:inline-grid;place-items:center;width:22px;height:20px;border-radius:6px;font-size:11px;font-weight:700;background:#1f2a66;color:#8a97d8;margin-right:3px}
+.sc.s1{background:#8b5a2b;color:#fff}.sc.s2{background:#9aa6c6;color:#10183f}.sc.s3{background:#ffd54a;color:#3a2a00}
+.srow .t{margin-left:auto;color:var(--sub);font-size:12px}
+.top5{margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,92,122,.08);border:1px solid rgba(255,92,122,.3);font-size:13px}
+.top5 b{color:#ff8aa0}
+.bar{height:6px;border-radius:9px;background:rgba(255,255,255,.08);margin:4px 0 8px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#ff8aa0,#ffb82e)}
+.feat{display:grid;gap:10px}
+.feat .f{display:flex;gap:14px;padding:16px 18px}
+.feat .f .ic{font-size:28px;flex:none}
+.feat h3{font-size:19px;margin:0 0 2px}.feat p{margin:0;font-size:14px;color:var(--sub)}
+/* lesson plan */
+.plan{margin-top:36px;display:grid;gap:10px}
+.lp{display:grid;grid-template-columns:110px 1fr auto;gap:16px;align-items:center;padding:16px 20px}
+@media(max-width:640px){.lp{grid-template-columns:1fr}}
+.lp .no{font-family:'Jua';font-size:26px;color:var(--gold)}
+.lp h3{font-size:19px;margin:0}.lp p{margin:2px 0 0;font-size:14px;color:var(--sub)}
+.lp .dur{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);color:var(--sub);white-space:nowrap}
+/* start */
+.start{display:grid;grid-template-columns:1fr 340px;gap:24px;margin-top:36px;align-items:start}
+@media(max-width:900px){.start{grid-template-columns:1fr}}
+.steps{display:grid;gap:12px}
+.st{display:flex;gap:16px;align-items:flex-start}
+.st .n{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-family:'Jua';font-size:22px;background:linear-gradient(160deg,var(--gold),#ff9a2e);color:#2a1d00}
+.st h3{font-size:20px;margin:0 0 2px}.st p{margin:0;color:var(--sub);font-size:14.5px}
+.st code{background:rgba(5,8,36,.7);border:1px solid var(--line);padding:1px 8px;border-radius:7px;color:var(--mint);font-size:13px}
+.qr{text-align:center;padding:24px}
+.qr .box{width:220px;margin:0 auto 14px;padding:12px;border-radius:20px;background:#fff;box-shadow:0 0 50px rgba(255,213,74,.25)}
+.qr .box svg{display:block;width:100%}
+.qr b{font-family:'Jua';font-weight:400;font-size:20px;display:block}
+.qr span{font-size:13px;color:var(--sub);word-break:break-all}
+.faq{margin-top:46px;display:grid;gap:10px}
+details.q{border:1px solid var(--line);border-radius:16px;background:var(--glass);padding:14px 18px}
+details.q summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.q summary::after{content:'+';color:var(--gold);font-size:20px;line-height:1}
+details.q[open] summary::after{content:'−'}
+details.q p{margin:10px 0 2px;color:#cfd8ff;font-size:14.5px}
+footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--sub);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.shoot{position:fixed;z-index:0;width:160px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.9),transparent);transform:rotate(-24deg);opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas><div class="neb"></div>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top">🚀 별빛 탐험대</a>
+  <div class="links">
+    <a href="#flow">탐사 흐름</a><a href="#route">항로 지도</a><a href="#lab">우주 실험실</a><a href="#reward">보상·관문</a><a href="#control">교사 관제센터</a><a href="#plan">차시 운영</a><a href="#start">시작하기</a>
+  </div>
+  <a class="navcta" href="/">탐험 시작 ↗</a>
+</div></nav>
+
+<main id="top">
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <span class="badge"><i></i>중학교 3학년 과학 · Ⅷ. 별과 우주 · 게임형 탐사 수업</span>
+      <h1>오늘, 교실이<br><span class="grad">우주선</span>이 됩니다</h1>
+      <p class="lead">학생은 캐릭터와 함께 다섯 행성을 탐험하며 연주시차부터 빅뱅까지 직접 만지고, 진짜 밤하늘을 관측하고, 관문 퀴즈를 통과합니다. 선생님은 관제센터에서 모든 대원의 항로를 실시간으로 지켜봅니다.</p>
+      <div class="btns">
+        <a class="b p" href="/">🧑‍🚀 학생 탐험 시작</a>
+        <a class="b g" href="#flow">수업이 흘러가는 방식 ↓</a>
+      </div>
+      <p class="addr">접속 주소 <b>sun-delta-eight.vercel.app</b> · 로그인 없이 학번·이름만 입력</p>
+    </div>
+    <div class="stage">
+      <div class="orbit o1"><span class="pl" style="background:radial-gradient(circle at 30% 30%,#ffe27a,#ff8a2a);box-shadow:0 0 18px #ff8a2a"></span></div>
+      <div class="orbit o2"><span class="pl" style="background:radial-gradient(circle at 30% 30%,#8ff0ff,#2a6bff);box-shadow:0 0 18px #2a6bff"></span></div>
+      <div class="phone"><iframe src="/" title="별빛 탐험대 실제 앱 미리보기" loading="lazy"></iframe></div>
+      <div class="tag t1">👆 <b>진짜 앱</b>이에요. 눌러 보세요</div>
+      <div class="tag t2">🔒 정답을 맞혀야 <b>다음 행성</b></div>
+      <div class="tag t3">🪙 정답마다 <b>코인·스티커</b></div>
+    </div>
+  </div>
+
+  <div class="stats reveal">
+    <div class="stat"><b data-n="5">0</b><span>탐사 행성</span></div>
+    <div class="stat"><b data-n="20">0</b><span>탐사 단계</span></div>
+    <div class="stat"><b data-n="25">0</b><span>관문 퀴즈</span></div>
+    <div class="stat"><b data-n="8">0</b><span>체험 시뮬레이션</span></div>
+    <div class="stat"><b data-n="5">0</b><span>스텔라리움 미션</span></div>
+  </div>
+</div>
+
+<!-- FLOW -->
+<section id="flow"><div class="wrap">
+  <div class="reveal"><div class="kick">MISSION FLOW</div><h2>한 행성은 이렇게 정복합니다</h2>
+  <p class="sec-lead">모든 행성은 같은 다섯 단계로 돌아가요. 설명만 듣는 게 아니라, 만지고 관측하고 기록한 뒤에야 다음 행성 문이 열립니다.</p></div>
+  <div class="grid flow">
+    <div class="card fstep reveal"><span class="who">캐릭터</span><div class="ic">💬</div><h3>브리핑</h3><p>길잡이 캐릭터가 말풍선으로 개념을 소개해요. 엄지 시차 실험, 손전등 비유처럼 몸으로 느끼는 도입.</p></div>
+    <div class="card fstep reveal"><span class="who">학생</span><div class="ic">🎛️</div><h3>직접 만지기</h3><p>슬라이더를 움직이면 별이 흔들리고, 빛이 퍼지고, 우주가 팽창해요. 공식이 눈앞에서 계산됩니다.</p></div>
+    <div class="card fstep reveal"><span class="who">스텔라리움</span><div class="ic">🔭</div><h3>진짜 하늘 관측</h3><p>스텔라리움에서 시리우스·리겔·M42·M31을 찾아 실제 거리와 등급을 확인하는 미션.</p></div>
+    <div class="card fstep reveal"><span class="who">학생</span><div class="ic">📇</div><h3>별 도감 기록</h3><p>관측한 값을 카드에 적으면 pc·연주시차·절대등급이 자동 계산돼 나만의 도감이 쌓여요.</p></div>
+    <div class="card fstep lock reveal"><span class="who">관문</span><div class="ic">🔐</div><h3>퀴즈 관문</h3><p>정답을 맞혀야만 통과! 두 번 틀리면 힌트가 열리고, 한 번에 맞히면 별 3개와 스티커.</p></div>
+  </div>
+</div></section>
+
+<!-- ROUTE -->
+<section id="route"><div class="wrap">
+  <div class="reveal"><div class="kick">STAR ROUTE</div><h2>다섯 행성 항로 지도</h2>
+  <p class="sec-lead">교과서 흐름 그대로, 가까운 별에서 우주의 시작까지 멀어지는 항로예요. 행성을 누르면 안에 무엇이 있는지 펼쳐져요.</p></div>
+  <div class="route"><div class="track"></div>
+  <div class="planets">
+    <div class="card pc reveal"><div class="orb" style="--a:#8ff0ff;--b:#2a6bff">🔭</div><small>STAGE 1</small><h3>시차별</h3><p class="c">별의 연주시차와 거리</p>
+      <div class="chips"><span class="chip y">퀴즈 5</span><span class="chip m">시뮬 1</span><span class="chip">시리우스 관측</span></div>
+      <div class="det"><ul><li>엄지손가락 시차 실험</li><li>1월↔7월 지구 이동과 별 위치 변화</li><li>d(pc) = 1 ÷ p(″), 1pc ≈ 3.26광년</li></ul></div></div>
+    <div class="card pc reveal"><div class="orb" style="--a:#ffe27a;--b:#ff8a2a">💡</div><small>STAGE 2</small><h3>밝기별</h3><p class="c">거리에 따른 별의 밝기</p>
+      <div class="chips"><span class="chip y">퀴즈 4</span><span class="chip m">시뮬 1</span><span class="chip">북극성 vs 시리우스</span></div>
+      <div class="det"><ul><li>손전등 비유로 시작</li><li>거리 n배 → 빛이 n²칸으로 퍼짐</li><li>밝기 ∝ 1 ÷ 거리²</li></ul></div></div>
+    <div class="card pc reveal"><div class="orb" style="--a:#d9a5ff;--b:#7b3ff2">⭐</div><small>STAGE 3</small><h3>등급별</h3><p class="c">겉보기등급 · 절대등급</p>
+      <div class="chips"><span class="chip y">퀴즈 5</span><span class="chip m">시뮬 2</span><span class="chip">오리온자리 도감</span></div>
+      <div class="det"><ul><li>히파르코스의 1~6등급</li><li>1등급 차 ≈ 2.5배, 5등급 차 = 100배</li><li>10pc에 세우면 순위가 뒤집히는 애니메이션</li></ul></div></div>
+    <div class="card pc reveal"><div class="orb" style="--a:#ff9fcf;--b:#e0357a">🌌</div><small>STAGE 4</small><h3>성운은하계</h3><p class="c">성운 · 성단 · 은하</p>
+      <div class="chips"><span class="chip y">퀴즈 6</span><span class="chip m">분류 게임</span><span class="chip">M42·M45·M13·M31</span></div>
+      <div class="det"><ul><li>발광·반사·암흑 성운</li><li>산개 성단 vs 구상 성단</li><li>우리은하와 태양계의 위치</li></ul></div></div>
+    <div class="card pc reveal"><div class="orb" style="--a:#ffb199;--b:#ff3d6e">💥</div><small>STAGE 5</small><h3>빅뱅행성</h3><p class="c">빅뱅 우주론</p>
+      <div class="chips"><span class="chip y">퀴즈 5</span><span class="chip m">시뮬 2</span><span class="chip">안드로메다의 과거 빛</span></div>
+      <div class="det"><ul><li>138억 년 우주 역사 타임라인</li><li>허블: 멀수록 빨리 멀어짐</li><li>우주 배경 복사, 수소 75%·헬륨 25%</li></ul></div></div>
+  </div></div>
+  <p class="reveal" style="text-align:center;color:var(--sub);margin-top:22px">🏅 다섯 행성을 모두 정복하면 <b style="color:var(--gold)">우주 졸업 시험</b>(전체 문제 중 무작위 6문제)이 열립니다.</p>
+</div></section>
+
+<!-- LAB -->
+<section id="lab"><div class="wrap">
+  <div class="reveal"><div class="kick">SPACE LAB</div><h2>앱 속 실험실, 여기서 먼저 만져 보세요</h2>
+  <p class="sec-lead">학생들이 앱에서 쓰는 시뮬레이션 중 두 가지를 그대로 옮겨 왔어요. 슬라이더를 움직여 보세요.</p></div>
+  <div class="grid lab">
+    <div class="card reveal"><h3>🔭 연주시차 측정기</h3><p>별이 멀어질수록 1월과 7월의 위치 차이가 얼마나 줄어드는지 보세요.</p>
+      <canvas id="cvP" width="520" height="300"></canvas>
+      <input type="range" id="rP" min="1" max="10" step="0.5" value="2" aria-label="별까지 거리">
+      <div class="read" id="oP"></div></div>
+    <div class="card reveal"><h3>💡 빛 퍼짐 실험기</h3><p>거리가 2배가 되면 빛은 왜 4배로 흐려질까요?</p>
+      <canvas id="cvB" width="520" height="300"></canvas>
+      <input type="range" id="rB" min="1" max="5" step="1" value="1" aria-label="거리 배수">
+      <div class="read" id="oB"></div></div>
+  </div>
+</div></section>
+
+<!-- REWARD -->
+<section id="reward"><div class="wrap">
+  <div class="reveal"><div class="kick">REWARDS & GATES</div><h2>맞히면 보상, 못 맞히면 못 지나간다</h2>
+  <p class="sec-lead">찍고 넘어가는 퀴즈가 아니에요. 정답을 맞혀야 다음 문제로 갈 수 있고, 한 번에 맞힐수록 보상이 커져요.</p></div>
+  <div class="grid rw">
+    <div class="card reveal"><div class="big">🪙</div><h3>코인</h3><p>한 번에 정답 +10, 다시 도전해 정답 +5. 행성 첫 클리어 +30, 도감 카드 +15.</p></div>
+    <div class="card reveal"><div class="big">🌠</div><h3>스티커 16종</h3><p>한 번에 맞힐 때마다 새 스티커. 지도 화면 보관함에 하나씩 채워져요.</p></div>
+    <div class="card reveal"><div class="big">⭐</div><h3>행성 별 3개</h3><p>오답 0번이면 ★3, 1~2번이면 ★2. 다시 도전해 별을 올릴 수 있어요.</p></div>
+    <div class="card reveal"><div class="big">🏅</div><h3>졸업 배지</h3><p>졸업 시험을 통과하면 학번·이름이 새겨진 명예 탐험대원 인증 +100코인.</p></div>
+  </div>
+  <div class="gate reveal"><div class="ic">🔐</div><p><b>오답이면 그 보기는 빨갛게 잠기고, 정답을 고를 때까지 다음 문제로 갈 수 없어요.</b> 두 번 틀리면 캐릭터가 힌트(해설)를 열어 줘요. 모든 오답 기록은 선생님 관제센터로 전송됩니다.</p></div>
+  <div class="crew reveal">
+    <div class="m"><svg viewBox="0 0 120 140" width="70" height="82"><rect x="38" y="88" width="44" height="38" rx="16" fill="#ff8a4c"/><circle cx="60" cy="54" r="40" fill="#f4f7ff"/><ellipse cx="60" cy="54" rx="31" ry="27" fill="#16224f"/><path d="M43 52q6-8 12 0M65 52q6-8 12 0" stroke="#7fffd4" stroke-width="3.6" fill="none" stroke-linecap="round"/><path d="M50 63q10 11 20 0z" fill="#7fffd4"/></svg><b>루미</b><span>용감한 우주인</span></div>
+    <div class="m"><svg viewBox="0 0 100 100" width="70" height="70" style="margin:6px 0"><polygon points="50,4 62,36 96,37 69,58 79,93 50,73 21,93 31,58 4,37 38,36" fill="#ffd54a" stroke="#ffb02e" stroke-width="4" stroke-linejoin="round"/><path d="M34 50q6-8 12 0M54 50q6-8 12 0" stroke="#3a2a00" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M41 60q9 11 18 0z" fill="#3a2a00"/></svg><b>별똥이</b><span>반짝반짝 별</span></div>
+    <div class="m"><svg viewBox="0 0 120 140" width="70" height="82"><rect x="36" y="84" width="48" height="42" rx="14" fill="#6c8cff"/><rect x="22" y="14" width="76" height="68" rx="20" fill="#c9d6ff"/><rect x="31" y="24" width="58" height="48" rx="13" fill="#16224f"/><path d="M41 44q6-8 12 0M67 44q6-8 12 0" stroke="#7fffd4" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M51 54q9 11 18 0z" fill="#7fffd4"/></svg><b>로보</b><span>똑똑한 로봇</span></div>
+    <div class="m"><svg viewBox="0 0 120 140" width="70" height="82"><ellipse cx="43" cy="22" rx="10" ry="25" fill="#fff"/><ellipse cx="77" cy="22" rx="10" ry="25" fill="#fff"/><ellipse cx="60" cy="110" rx="28" ry="24" fill="#b8a2ff"/><circle cx="60" cy="62" r="38" fill="#fff"/><path d="M40 58q6-8 12 0M68 58q6-8 12 0" stroke="#3a2a4a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M51 68q9 11 18 0z" fill="#3a2a4a"/></svg><b>달토끼</b><span>달나라 토끼</span></div>
+  </div>
+  <p class="reveal" style="text-align:center;color:var(--sub);font-size:14px">학생은 시작할 때 네 명의 대원 중 한 명을 골라 끝까지 함께 탐험해요.</p>
+</div></section>
+
+<!-- CONTROL -->
+<section id="control"><div class="wrap">
+  <div class="reveal"><div class="kick">MISSION CONTROL</div><h2>선생님은 관제센터에 앉습니다</h2>
+  <p class="sec-lead">학생이 문제를 풀 때마다 기록이 실시간으로 들어와요. 누가 어디까지 왔는지, 반 전체가 어느 개념에서 막혔는지 한눈에.</p></div>
+  <div class="ctrl">
+    <div class="dash reveal" aria-label="교사 관제센터 화면 예시">
+      <div class="dhead"><span class="jua" style="font-size:20px">👩‍🏫 교사 모드</span><span class="live"><i></i>실시간 연결</span></div>
+      <div class="kpis"><div class="kpi"><b id="k1">24</b><span>학생 수</span></div><div class="kpi"><b id="k2">7.8</b><span>평균 ★</span></div><div class="kpi"><b id="k3">3</b><span>졸업</span></div><div class="kpi"><b id="k4">21</b><span>활동 중</span></div></div>
+      <div id="rows"></div>
+      <div class="top5"><b>❓ 많이 틀린 문제 TOP</b>
+        <div style="margin-top:6px">1. [등급별] 1등급 별은 6등급 별보다 몇 배 밝을까요?</div><div class="bar"><i style="width:62%"></i></div>
+        <div>2. [시차별] 연주시차가 0.5″인 별까지의 거리는?</div><div class="bar"><i style="width:48%"></i></div>
+      </div>
+      <p style="font-size:11.5px;color:var(--sub);margin:10px 0 0">※ 안내용 예시 화면이며, 표시된 학생·수치는 가상입니다.</p>
+    </div>
+    <div class="feat">
+      <div class="card f reveal"><div class="ic">📡</div><div><h3>실시간 학생 현황</h3><p>학번·이름 검색, 단원별 별, 코인, 도감 카드 수, 마지막 활동 시간.</p></div></div>
+      <div class="card f reveal"><div class="ic">🔎</div><div><h3>학생 상세 펼쳐 보기</h3><p>단원별 도전 횟수, 그 학생이 많이 틀린 문제, 작성한 별 도감 카드까지.</p></div></div>
+      <div class="card f reveal"><div class="ic">🎯</div><div><h3>반 전체 오답 TOP 5</h3><p>오답률로 정렬해 다음 시간에 다시 짚을 개념을 바로 골라요.</p></div></div>
+      <div class="card f reveal"><div class="ic">📋</div><div><h3>엑셀로 한 번에</h3><p>전체 결과를 표로 복사해 엑셀·구글 시트에 그대로 붙여 넣기.</p></div></div>
+      <div class="card f reveal"><div class="ic">🔒</div><div><h3>비밀번호 보호 · 전체 초기화</h3><p>교사 비밀번호로만 입장. 새 학기엔 버튼 하나로 모든 학생 기록 초기화.</p></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- PLAN -->
+<section id="plan"><div class="wrap">
+  <div class="reveal"><div class="kick">LESSON PLAN</div><h2>이렇게 운영해 보세요</h2>
+  <p class="sec-lead">한 차시에 행성 하나를 기본으로, 학생 속도에 맞춰 자유롭게 늘이고 줄일 수 있어요.</p></div>
+  <div class="plan">
+    <div class="card lp reveal"><div class="no">1차시</div><div><h3>🔭 시차별 — 우주를 엄지로 재다</h3><p>엄지 실험 → 연주시차 시뮬 → 스텔라리움에서 시리우스·북극성 거리 확인 → 관문 퀴즈</p></div><span class="dur">45분</span></div>
+    <div class="card lp reveal"><div class="no">2차시</div><div><h3>💡 밝기별 — 멀수록 얼마나 어두울까</h3><p>손전등 비유 → 빛 퍼짐 시뮬 → 북극성 vs 시리우스 반전 미션 → 관문 퀴즈</p></div><span class="dur">45분</span></div>
+    <div class="card lp reveal"><div class="no">3차시</div><div><h3>⭐ 등급별 — 진짜 밝은 별은 누구?</h3><p>등급 사다리 → 10pc 순위 뒤집기 → 오리온자리 별 도감 카드 3장 → 관문 퀴즈</p></div><span class="dur">45분</span></div>
+    <div class="card lp reveal"><div class="no">4차시</div><div><h3>🌌 성운은하계 — 하늘의 보물 분류</h3><p>천체 4종 관찰 → 분류 게임 → 스텔라리움 M42·M45·M13·M31 탐방 → 관문 퀴즈</p></div><span class="dur">45분</span></div>
+    <div class="card lp reveal"><div class="no">5차시</div><div><h3>💥 빅뱅행성 + 졸업 시험</h3><p>우주 역사 타임라인 → 허블 팽창 시뮬 → 안드로메다 과거의 빛 → 관문 퀴즈 → 졸업 시험</p></div><span class="dur">45분</span></div>
+  </div>
+</div></section>
+
+<!-- START -->
+<section id="start"><div class="wrap">
+  <div class="reveal"><div class="kick">LAUNCH</div><h2>발사까지 세 단계</h2></div>
+  <div class="start">
+    <div class="steps">
+      <div class="card st reveal"><div class="n">1</div><div><h3>QR로 접속</h3><p>학생은 휴대폰·태블릿·노트북 어느 기기든 QR을 찍거나 <code>sun-delta-eight.vercel.app</code>에 접속해요. 로그인도 설치도 필요 없어요.</p></div></div>
+      <div class="card st reveal"><div class="n">2</div><div><h3>학번·이름 입력, 대원 선택</h3><p>"학생으로 시작하기" → 학번과 이름 → 함께할 캐릭터를 고르면 출발.</p></div></div>
+      <div class="card st reveal"><div class="n">3</div><div><h3>선생님은 관제센터로</h3><p>교사 기기에서 <code>sun-delta-eight.vercel.app/#teacher</code>로 접속해 교사 비밀번호를 입력하면 실시간 현황이 열려요. 처음이라면 같은 화면에서 비밀번호를 만들어요.</p></div></div>
+      <div class="card st reveal"><div class="n">🔭</div><div><h3>스텔라리움 준비 (선택)</h3><p>관측 미션은 <a href="https://stellarium-web.org/" target="_blank" rel="noopener">stellarium-web.org</a>(설치 없음) 또는 Stellarium Mobile 앱에서 진행해요. 앱 안 버튼으로 바로 열려요.</p></div></div>
+    </div>
+    <div class="card qr reveal">
+      <div class="box"><svg viewBox="-2 -2 37 37" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect x="-2" y="-2" width="37" height="37" fill="#fff"/><path d="M2,2h1v1h-1zM3,2h1v1h-1zM4,2h1v1h-1zM5,2h1v1h-1zM6,2h1v1h-1zM7,2h1v1h-1zM8,2h1v1h-1zM11,2h1v1h-1zM14,2h1v1h-1zM15,2h1v1h-1zM18,2h1v1h-1zM21,2h1v1h-1zM24,2h1v1h-1zM25,2h1v1h-1zM26,2h1v1h-1zM27,2h1v1h-1zM28,2h1v1h-1zM29,2h1v1h-1zM30,2h1v1h-1zM2,3h1v1h-1zM8,3h1v1h-1zM12,3h1v1h-1zM13,3h1v1h-1zM14,3h1v1h-1zM16,3h1v1h-1zM17,3h1v1h-1zM18,3h1v1h-1zM19,3h1v1h-1zM20,3h1v1h-1zM21,3h1v1h-1zM24,3h1v1h-1zM30,3h1v1h-1zM2,4h1v1h-1zM4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM8,4h1v1h-1zM10,4h1v1h-1zM11,4h1v1h-1zM12,4h1v1h-1zM14,4h1v1h-1zM15,4h1v1h-1zM16,4h1v1h-1zM18,4h1v1h-1zM20,4h1v1h-1zM22,4h1v1h-1zM24,4h1v1h-1zM26,4h1v1h-1zM27,4h1v1h-1zM28,4h1v1h-1zM30,4h1v1h-1zM2,5h1v1h-1zM4,5h1v1h-1zM5,5h1v1h-1zM6,5h1v1h-1zM8,5h1v1h-1zM11,5h1v1h-1zM12,5h1v1h-1zM13,5h1v1h-1zM15,5h1v1h-1zM16,5h1v1h-1zM17,5h1v1h-1zM24,5h1v1h-1zM26,5h1v1h-1zM27,5h1v1h-1zM28,5h1v1h-1zM30,5h1v1h-1zM2,6h1v1h-1zM4,6h1v1h-1zM5,6h1v1h-1zM6,6h1v1h-1zM8,6h1v1h-1zM12,6h1v1h-1zM16,6h1v1h-1zM19,6h1v1h-1zM20,6h1v1h-1zM21,6h1v1h-1zM24,6h1v1h-1zM26,6h1v1h-1zM27,6h1v1h-1zM28,6h1v1h-1zM30,6h1v1h-1zM2,7h1v1h-1zM8,7h1v1h-1zM11,7h1v1h-1zM15,7h1v1h-1zM20,7h1v1h-1zM21,7h1v1h-1zM22,7h1v1h-1zM24,7h1v1h-1zM30,7h1v1h-1zM2,8h1v1h-1zM3,8h1v1h-1zM4,8h1v1h-1zM5,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM16,8h1v1h-1zM18,8h1v1h-1zM20,8h1v1h-1zM22,8h1v1h-1zM24,8h1v1h-1zM25,8h1v1h-1zM26,8h1v1h-1zM27,8h1v1h-1zM28,8h1v1h-1zM29,8h1v1h-1zM30,8h1v1h-1zM10,9h1v1h-1zM11,9h1v1h-1zM12,9h1v1h-1zM14,9h1v1h-1zM15,9h1v1h-1zM16,9h1v1h-1zM18,9h1v1h-1zM19,9h1v1h-1zM22,9h1v1h-1zM2,10h1v1h-1zM3,10h1v1h-1zM4,10h1v1h-1zM6,10h1v1h-1zM7,10h1v1h-1zM8,10h1v1h-1zM9,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM13,10h1v1h-1zM16,10h1v1h-1zM17,10h1v1h-1zM18,10h1v1h-1zM19,10h1v1h-1zM22,10h1v1h-1zM23,10h1v1h-1zM24,10h1v1h-1zM28,10h1v1h-1zM2,11h1v1h-1zM4,11h1v1h-1zM10,11h1v1h-1zM12,11h1v1h-1zM13,11h1v1h-1zM16,11h1v1h-1zM17,11h1v1h-1zM19,11h1v1h-1zM20,11h1v1h-1zM22,11h1v1h-1zM23,11h1v1h-1zM24,11h1v1h-1zM27,11h1v1h-1zM30,11h1v1h-1zM3,12h1v1h-1zM7,12h1v1h-1zM8,12h1v1h-1zM9,12h1v1h-1zM11,12h1v1h-1zM15,12h1v1h-1zM18,12h1v1h-1zM19,12h1v1h-1zM23,12h1v1h-1zM24,12h1v1h-1zM25,12h1v1h-1zM26,12h1v1h-1zM28,12h1v1h-1zM29,12h1v1h-1zM30,12h1v1h-1zM2,13h1v1h-1zM5,13h1v1h-1zM7,13h1v1h-1zM13,13h1v1h-1zM17,13h1v1h-1zM19,13h1v1h-1zM21,13h1v1h-1zM23,13h1v1h-1zM26,13h1v1h-1zM29,13h1v1h-1zM3,14h1v1h-1zM4,14h1v1h-1zM5,14h1v1h-1zM8,14h1v1h-1zM9,14h1v1h-1zM10,14h1v1h-1zM14,14h1v1h-1zM19,14h1v1h-1zM21,14h1v1h-1zM22,14h1v1h-1zM23,14h1v1h-1zM24,14h1v1h-1zM27,14h1v1h-1zM29,14h1v1h-1zM30,14h1v1h-1zM3,15h1v1h-1zM5,15h1v1h-1zM6,15h1v1h-1zM7,15h1v1h-1zM10,15h1v1h-1zM13,15h1v1h-1zM14,15h1v1h-1zM15,15h1v1h-1zM18,15h1v1h-1zM19,15h1v1h-1zM22,15h1v1h-1zM23,15h1v1h-1zM24,15h1v1h-1zM25,15h1v1h-1zM27,15h1v1h-1zM30,15h1v1h-1zM4,16h1v1h-1zM5,16h1v1h-1zM7,16h1v1h-1zM8,16h1v1h-1zM12,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM16,16h1v1h-1zM18,16h1v1h-1zM23,16h1v1h-1zM24,16h1v1h-1zM27,16h1v1h-1zM29,16h1v1h-1zM30,16h1v1h-1zM3,17h1v1h-1zM4,17h1v1h-1zM5,17h1v1h-1zM12,17h1v1h-1zM14,17h1v1h-1zM15,17h1v1h-1zM16,17h1v1h-1zM17,17h1v1h-1zM19,17h1v1h-1zM20,17h1v1h-1zM21,17h1v1h-1zM22,17h1v1h-1zM26,17h1v1h-1zM27,17h1v1h-1zM29,17h1v1h-1zM2,18h1v1h-1zM3,18h1v1h-1zM5,18h1v1h-1zM8,18h1v1h-1zM9,18h1v1h-1zM10,18h1v1h-1zM12,18h1v1h-1zM13,18h1v1h-1zM16,18h1v1h-1zM19,18h1v1h-1zM22,18h1v1h-1zM23,18h1v1h-1zM24,18h1v1h-1zM27,18h1v1h-1zM29,18h1v1h-1zM30,18h1v1h-1zM3,19h1v1h-1zM5,19h1v1h-1zM6,19h1v1h-1zM9,19h1v1h-1zM10,19h1v1h-1zM11,19h1v1h-1zM12,19h1v1h-1zM13,19h1v1h-1zM16,19h1v1h-1zM18,19h1v1h-1zM19,19h1v1h-1zM20,19h1v1h-1zM22,19h1v1h-1zM23,19h1v1h-1zM24,19h1v1h-1zM27,19h1v1h-1zM28,19h1v1h-1zM30,19h1v1h-1zM2,20h1v1h-1zM7,20h1v1h-1zM8,20h1v1h-1zM9,20h1v1h-1zM12,20h1v1h-1zM15,20h1v1h-1zM19,20h1v1h-1zM20,20h1v1h-1zM23,20h1v1h-1zM25,20h1v1h-1zM26,20h1v1h-1zM29,20h1v1h-1zM30,20h1v1h-1zM3,21h1v1h-1zM5,21h1v1h-1zM6,21h1v1h-1zM7,21h1v1h-1zM9,21h1v1h-1zM10,21h1v1h-1zM11,21h1v1h-1zM13,21h1v1h-1zM17,21h1v1h-1zM19,21h1v1h-1zM21,21h1v1h-1zM22,21h1v1h-1zM23,21h1v1h-1zM27,21h1v1h-1zM29,21h1v1h-1zM2,22h1v1h-1zM3,22h1v1h-1zM4,22h1v1h-1zM5,22h1v1h-1zM6,22h1v1h-1zM8,22h1v1h-1zM14,22h1v1h-1zM18,22h1v1h-1zM19,22h1v1h-1zM21,22h1v1h-1zM22,22h1v1h-1zM23,22h1v1h-1zM24,22h1v1h-1zM25,22h1v1h-1zM26,22h1v1h-1zM10,23h1v1h-1zM12,23h1v1h-1zM13,23h1v1h-1zM14,23h1v1h-1zM15,23h1v1h-1zM18,23h1v1h-1zM19,23h1v1h-1zM21,23h1v1h-1zM22,23h1v1h-1zM26,23h1v1h-1zM28,23h1v1h-1zM29,23h1v1h-1zM30,23h1v1h-1zM2,24h1v1h-1zM3,24h1v1h-1zM4,24h1v1h-1zM5,24h1v1h-1zM6,24h1v1h-1zM7,24h1v1h-1zM8,24h1v1h-1zM10,24h1v1h-1zM11,24h1v1h-1zM13,24h1v1h-1zM14,24h1v1h-1zM16,24h1v1h-1zM18,24h1v1h-1zM19,24h1v1h-1zM20,24h1v1h-1zM21,24h1v1h-1zM22,24h1v1h-1zM24,24h1v1h-1zM26,24h1v1h-1zM27,24h1v1h-1zM29,24h1v1h-1zM30,24h1v1h-1zM2,25h1v1h-1zM8,25h1v1h-1zM10,25h1v1h-1zM14,25h1v1h-1zM15,25h1v1h-1zM16,25h1v1h-1zM18,25h1v1h-1zM19,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM26,25h1v1h-1zM27,25h1v1h-1zM29,25h1v1h-1zM30,25h1v1h-1zM2,26h1v1h-1zM4,26h1v1h-1zM5,26h1v1h-1zM6,26h1v1h-1zM8,26h1v1h-1zM10,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM13,26h1v1h-1zM16,26h1v1h-1zM17,26h1v1h-1zM18,26h1v1h-1zM19,26h1v1h-1zM22,26h1v1h-1zM23,26h1v1h-1zM24,26h1v1h-1zM25,26h1v1h-1zM26,26h1v1h-1zM30,26h1v1h-1zM2,27h1v1h-1zM4,27h1v1h-1zM5,27h1v1h-1zM6,27h1v1h-1zM8,27h1v1h-1zM12,27h1v1h-1zM13,27h1v1h-1zM16,27h1v1h-1zM19,27h1v1h-1zM26,27h1v1h-1zM28,27h1v1h-1zM29,27h1v1h-1zM30,27h1v1h-1zM2,28h1v1h-1zM4,28h1v1h-1zM5,28h1v1h-1zM6,28h1v1h-1zM8,28h1v1h-1zM10,28h1v1h-1zM12,28h1v1h-1zM15,28h1v1h-1zM18,28h1v1h-1zM22,28h1v1h-1zM23,28h1v1h-1zM25,28h1v1h-1zM26,28h1v1h-1zM27,28h1v1h-1zM30,28h1v1h-1zM2,29h1v1h-1zM8,29h1v1h-1zM10,29h1v1h-1zM11,29h1v1h-1zM13,29h1v1h-1zM17,29h1v1h-1zM18,29h1v1h-1zM19,29h1v1h-1zM20,29h1v1h-1zM21,29h1v1h-1zM22,29h1v1h-1zM26,29h1v1h-1zM29,29h1v1h-1zM2,30h1v1h-1zM3,30h1v1h-1zM4,30h1v1h-1zM5,30h1v1h-1zM6,30h1v1h-1zM7,30h1v1h-1zM8,30h1v1h-1zM10,30h1v1h-1zM12,30h1v1h-1zM14,30h1v1h-1zM17,30h1v1h-1zM18,30h1v1h-1zM19,30h1v1h-1zM21,30h1v1h-1zM22,30h1v1h-1zM24,30h1v1h-1zM26,30h1v1h-1zM27,30h1v1h-1zM29,30h1v1h-1zM30,30h1v1h-1z" fill="#0a0f2e"/></svg></div>
+      <b>학생 접속 QR</b><span>sun-delta-eight.vercel.app</span>
+      <div class="btns" style="justify-content:center;margin:16px 0 0"><a class="b p" href="/">바로 열기</a></div>
+    </div>
+  </div>
+
+  <div class="faq">
+    <details class="q reveal"><summary>학생이 로그인을 해야 하나요?</summary><p>아니요. 학번과 이름만 입력하면 돼요. 기록은 기기에 저장되고, 동시에 선생님 관제센터로 자동 전송돼요.</p></details>
+    <details class="q reveal"><summary>다른 기기에서 열면 이어서 할 수 있나요?</summary><p>진행 상황은 그 기기 브라우저에 저장돼요. 다른 기기에서는 새로 시작되니, 수업 중에는 같은 기기를 쓰도록 안내해 주세요.</p></details>
+    <details class="q reveal"><summary>인터넷이 끊기면 어떻게 되나요?</summary><p>탐험과 퀴즈는 계속할 수 있어요. 자동 전송이 안 될 땐 결과 화면의 "제출 코드"를 선생님께 보내면, 교사 모드의 "제출 코드 가져오기"로 불러올 수 있어요.</p></details>
+    <details class="q reveal"><summary>교사 비밀번호를 잊어버렸어요.</summary><p>교사 비밀번호 화면의 "비밀번호를 잊었어요"를 누르면 교사 이메일로 재설정 메일이 가요.</p></details>
+    <details class="q reveal"><summary>새 반·새 학기에 다시 쓰려면?</summary><p>교사 모드 아래의 "전체 학생 초기화"에서 <b>초기화</b>라고 입력하면 모든 기록과 학생 기기의 진행 상황이 초기화돼요. 되돌릴 수 없으니 먼저 결과를 복사해 두세요.</p></details>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>🚀 별빛 탐험대 · 중학교 3학년 과학 Ⅷ. 별과 우주</span>
+  <span><a href="/">학생 앱</a> · <a href="/#teacher">교사 모드</a> · 관제센터 예시 화면의 학생과 수치는 가상입니다.</span>
+</div></footer>
+
+<script>
+/* sky */
+(function(){const cv=document.getElementById('sky'),c=cv.getContext('2d');let W,H,S=[];
+function size(){W=cv.width=innerWidth*devicePixelRatio;H=cv.height=innerHeight*devicePixelRatio;cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';S=[];for(let i=0;i<Math.min(260,innerWidth/4);i++)S.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.3+.3)*devicePixelRatio,p:Math.random()*6.28,s:Math.random()*1.4+.4,d:Math.random()*.6+.2});}
+size();addEventListener('resize',size);let sy=0;addEventListener('scroll',()=>sy=scrollY,{passive:true});
+function f(t){c.clearRect(0,0,W,H);for(const s of S){const y=((s.y-sy*s.d*devicePixelRatio)%H+H)%H;c.globalAlpha=.3+.7*Math.abs(Math.sin(t/1000*s.s+s.p));c.fillStyle='#fff';c.beginPath();c.arc(s.x,y,s.r,0,7);c.fill();}c.globalAlpha=1;requestAnimationFrame(f);}requestAnimationFrame(f);
+setInterval(()=>{if(document.hidden||matchMedia('(prefers-reduced-motion:reduce)').matches)return;const e=document.createElement('div');e.className='shoot';e.style.left=(Math.random()*70+20)+'vw';e.style.top=(Math.random()*40)+'vh';document.body.appendChild(e);e.animate([{opacity:0,transform:'rotate(-24deg) translateX(0)'},{opacity:1,offset:.2},{opacity:0,transform:'rotate(-24deg) translateX(-420px)'}],{duration:1300,easing:'ease-out'}).onfinish=()=>e.remove();},4200);
+})();
+/* reveal + counters */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');e.target.querySelectorAll('[data-n]').forEach(n=>{const to=+n.dataset.n;let k=0;const step=()=>{k++;n.textContent=Math.round(to*Math.min(1,k/30));if(k<30)requestAnimationFrame(step);};step();});io.unobserve(e.target);}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(e=>io.observe(e));
+/* nav highlight */
+const secs=[...document.querySelectorAll('section[id]')],navs=[...document.querySelectorAll('.links a')];
+addEventListener('scroll',()=>{let cur='';for(const s of secs)if(s.getBoundingClientRect().top<120)cur=s.id;navs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));},{passive:true});
+/* planet cards */
+document.querySelectorAll('.pc').forEach(p=>p.onclick=()=>p.classList.toggle('open'));
+/* lab: parallax */
+(function(){const cv=document.getElementById('cvP'),c=cv.getContext('2d'),R=document.getElementById('rP'),O=document.getElementById('oP');let t=0;
+const bg=[];for(let i=0;i<40;i++)bg.push([Math.random()*520,212+Math.random()*80,Math.random()*1.3+.4]);
+const circ=(x,y,r,col)=>{c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,7);c.fill();};
+const tx=(s,x,y,col,al='center')=>{c.fillStyle=col;c.font='700 13px "Noto Sans KR"';c.textAlign=al;c.fillText(s,x,y);};
+function draw(){const d=+R.value,p=1/d,e=Math.sin(t);c.clearRect(0,0,520,300);c.fillStyle='#0b1238';c.fillRect(0,0,520,192);
+const cx=260,gy=160,Rr=110,ex=cx+e*Rr,sy=gy-13.5*d;c.setLineDash([4,4]);c.strokeStyle='#4e63c9';c.beginPath();c.ellipse(cx,gy,Rr,16,0,0,7);c.stroke();c.setLineDash([]);
+c.strokeStyle='#7fffd4';c.lineWidth=2;c.beginPath();c.moveTo(ex,gy);c.lineTo(cx,sy);c.stroke();c.lineWidth=1;circ(cx,gy,10,'#ffb02e');circ(ex,gy,7,'#4aa3ff');circ(cx,sy,10,'rgba(255,213,74,.25)');circ(cx,sy,6,'#ffd54a');
+tx('태양',cx,gy+34,'#ffb02e');tx('지구',ex,gy-14,'#7cc0ff');tx('별',cx+16,sy+5,'#ffd54a','left');tx('우주를 위에서 본 모습',10,20,'#9fb0e8','left');
+for(const s of bg)circ(s[0],s[1],s[2],'rgba(255,255,255,.75)');tx('지구에서 본 하늘',10,212,'#9fb0e8','left');
+const sh=90*p;[[cx+sh,'1월'],[cx-sh,'7월']].forEach(([x,l])=>{c.setLineDash([3,3]);c.strokeStyle='#7a89d6';c.beginPath();c.arc(x,256,8,0,7);c.stroke();c.setLineDash([]);tx(l,x,288,'#9fb0e8');});
+circ(cx-e*sh,256,9,'rgba(255,213,74,.25)');circ(cx-e*sh,256,5,'#ffd54a');
+O.innerHTML=`거리 <b>${d}pc</b> (약 ${(d*3.26).toFixed(1)}광년) → 연주시차 p = 1 ÷ ${d} = <b>${p.toFixed(2)}″</b>`;}
+function loop(){t+=.02;draw();requestAnimationFrame(loop);}R.oninput=draw;loop();})();
+/* lab: brightness */
+(function(){const cv=document.getElementById('cvB'),c=cv.getContext('2d'),R=document.getElementById('rB'),O=document.getElementById('oB');
+function draw(){const n=+R.value;c.clearRect(0,0,520,300);c.fillStyle='#050824';c.fillRect(0,0,520,300);const cy=150,x0=170,cell=50,side=n*cell;
+const g=c.createRadialGradient(70,cy,0,70,cy,50);g.addColorStop(0,'#fff');g.addColorStop(.35,'#ffe27a');g.addColorStop(1,'rgba(255,200,50,0)');c.fillStyle=g;c.beginPath();c.arc(70,cy,50,0,7);c.fill();
+c.fillStyle='rgba(255,226,122,.1)';c.beginPath();c.moveTo(70,cy);c.lineTo(x0,cy-side/2);c.lineTo(x0,cy+side/2);c.closePath();c.fill();
+const a=Math.max(.06,1/(n*n));for(let i=0;i<n;i++)for(let j=0;j<n;j++){c.fillStyle=`rgba(255,226,122,${a})`;c.fillRect(x0+j*cell,cy-side/2+i*cell,cell-3,cell-3);}
+c.strokeStyle='#fff';c.lineWidth=2;c.strokeRect(x0,cy-side/2,cell-3,cell-3);c.lineWidth=1;c.fillStyle='#9fb0e8';c.font='700 13px "Noto Sans KR"';c.fillText('흰 테두리 1칸 = 내 눈에 들어오는 빛',12,22);
+O.innerHTML=`거리 <b>${n}배</b> → 빛이 <b>${n*n}칸</b>으로 퍼져 한 칸 밝기 <b>${n===1?'1':'1/'+n*n}</b>`;}
+R.oninput=draw;draw();})();
+/* control demo rows */
+(function(){const N=[['30101','김하늘',[3,3,2,1,0],'방금'],['30104','이별',[3,2,2,0,0],'1분 전'],['30107','박은하',[2,3,3,3,2],'방금'],['30112','최우주',[3,1,0,0,0],'2분 전'],['30118','정성운',[3,3,3,3,3],'방금']];
+const box=document.getElementById('rows');
+function render(){box.innerHTML=N.map((r,i)=>`<div class="srow" id="r${i}"><span class="nm">${r[0]} ${r[1]}${r[2].every(x=>x)?' 🎓':''}</span><span>${r[2].map((s,k)=>`<i class="sc s${s}">${k+1}</i>`).join('')}</span><span class="t">${r[3]}</span></div>`).join('');}
+render();
+setInterval(()=>{const i=Math.random()*N.length|0,r=N[i],k=r[2].findIndex(s=>s<3);if(k<0)return;r[2][k]++;r[3]='방금';render();const el=document.getElementById('r'+i);el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),900);},2600);})();
+</script>
+</body>
+</html>
