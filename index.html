@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>별빛 탐험대 – 중3 별과 우주 퀴즈 게임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b22;--card:#111a47;--card2:#1a2564;--line:#2c3a85;--gold:#ffd54a;--mint:#7fffd4;--pink:#ff8fb1;--txt:#eef2ff;--sub:#a9b6e8;--good:#27c486;--bad:#ff5c7a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at 50% 0%,#1b2670 0%,#0a1034 45%,#050718 100%);color:var(--txt);font-family:'Noto Sans KR',system-ui,sans-serif;line-height:1.65;min-height:100vh;font-size:15px}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+#app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:14px 14px 90px}
+h1,h2,h3,.jua{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;margin:0}
+h3{font-size:19px;margin:0 0 8px;color:var(--gold)}
+p{margin:6px 0}
+b{color:#fff}
+.sub,.small{color:var(--sub);font-size:12.5px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.logo{font-size:24px;color:var(--gold);text-shadow:0 0 14px rgba(255,213,74,.5)}
+.pill{background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-weight:700;color:var(--gold)}
+.back{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:6px 12px;font-size:14px;cursor:pointer}
+.lrow{display:flex;align-items:center;gap:10px;margin:8px 0}
+.lrow svg{flex:none;animation:float 3.2s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.bubble{position:relative;background:#fff;color:#16204f;border-radius:16px;padding:10px 13px;font-weight:500;font-size:14px;flex:1}
+.bubble b{color:#d6336c}
+.bubble::before{content:'';position:absolute;left:-8px;top:22px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+.card{background:linear-gradient(160deg,var(--card),#0e1538);border:1px solid var(--line);border-radius:18px;padding:16px;margin:10px 0;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;border:0;border-radius:14px;padding:13px 16px;font:700 16px 'Noto Sans KR';color:#2a1d00;background:linear-gradient(180deg,#ffe27a,#ffb82e);box-shadow:0 4px 0 #b97a00;cursor:pointer;margin-top:10px}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #b97a00}
+.btn.ghost{background:var(--card2);color:var(--txt);box-shadow:0 4px 0 #0b1233;border:1px solid var(--line)}
+.btn.mint{background:linear-gradient(180deg,#9bffe0,#3fd6a5);box-shadow:0 4px 0 #1b8a69;color:#06382a}
+.navrow{display:flex;gap:10px}.navrow .btn{flex:1}
+.dots{display:flex;gap:6px;justify-content:center;margin:6px 0}
+.dots i{width:26px;height:6px;border-radius:9px;background:var(--line)}
+.dots i.on{background:var(--gold)}
+.map{position:relative;margin-top:6px}
+.map::before{content:'';position:absolute;left:43px;top:30px;bottom:30px;border-left:2px dashed var(--line)}
+.node{position:relative;display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px 12px;margin:0 0 12px;color:var(--txt);font:inherit;cursor:pointer}
+.node:active{transform:scale(.98)}
+.node.lock{opacity:.5;cursor:not-allowed}
+.planet{flex:none;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:radial-gradient(circle at 30% 28%,var(--a),var(--b) 70%);box-shadow:0 0 22px var(--b),inset -6px -8px 14px rgba(0,0,0,.35)}
+.ninfo{display:flex;flex-direction:column;line-height:1.35}
+.ninfo small{color:var(--sub);font-size:11px;letter-spacing:.08em}
+.ninfo b{font-family:'Jua';font-weight:400;font-size:19px}
+.ninfo span{color:var(--sub);font-size:13px}
+.stars{color:var(--gold);letter-spacing:2px;font-size:15px}
+canvas.cv{width:100%;height:auto;display:block;border-radius:12px;background:#050824}
+.ctl{margin:10px 0 0}
+.ctl label{display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+input[type=range]{width:100%;accent-color:var(--gold);height:30px}
+.read{background:#0a1036;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:14px}
+.read b{color:var(--mint)}
+.formula{background:#0a1036;border-left:4px solid var(--gold);border-radius:10px;padding:8px 12px;margin:8px 0;font-weight:700}
+ul.pts{padding-left:18px;margin:6px 0}
+.hl{color:var(--mint);font-weight:700}
+.opts{display:grid;gap:9px;margin-top:8px}
+.opt{background:var(--card2);color:var(--txt);border:2px solid var(--line);border-radius:14px;padding:12px 14px;font:500 15px 'Noto Sans KR';text-align:left;cursor:pointer}
+.opt:active{transform:scale(.99)}
+.opt.good{border-color:var(--good);background:#0f4a3a}
+.opt.bad{border-color:var(--bad);background:#552038}
+.qq{color:#fff;font-size:19px;line-height:1.5}
+#fb{margin-top:10px}
+#fb .ex{background:#0a1036;border-radius:12px;padding:10px 12px;margin-top:8px;font-size:14px}
+.hearts{font-size:18px;letter-spacing:2px}
+.prog{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:6px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--gold));transition:width .4s}
+.center{text-align:center}
+.bigstars{font-size:44px;color:var(--gold);letter-spacing:6px;text-shadow:0 0 18px rgba(255,213,74,.6)}
+.icons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.icons .ic{background:#0a1036;border:1px solid var(--line);border-radius:12px;padding:6px;text-align:center;font-size:12.5px}
+.icons canvas{width:100%;border-radius:8px;display:block}
+.icons b{display:block;color:var(--gold);font-size:14px;margin-top:3px}
+.rank{position:relative;height:306px;margin-top:10px}
+.row{position:absolute;left:0;right:0;height:46px;display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:0 10px;transition:top .9s cubic-bezier(.5,.1,.2,1)}
+.row .rk{width:24px;height:24px;border-radius:50%;background:var(--gold);color:#2a1d00;font-weight:700;display:grid;place-items:center;font-size:13px;flex:none}
+.row .nm{font-weight:700;min-width:70px}
+.row .mg{color:var(--mint);font-weight:700;font-size:13px}
+.row small{margin-left:auto;color:var(--sub);font-size:11px;text-align:right}
+.tog{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tog button{padding:10px 6px;border-radius:12px;border:2px solid var(--line);background:var(--card2);color:var(--txt);font:700 13px 'Noto Sans KR';cursor:pointer;line-height:1.3}
+.tog button.on{border-color:var(--gold);background:#3b3410}
+.ladder{display:flex;justify-content:space-around;align-items:center;margin:10px 0;gap:8px;text-align:center}
+.glow{width:84px;height:84px;border-radius:50%;margin:0 auto 4px;background:radial-gradient(circle,#fff 0 18%,#ffe27a 38%,rgba(255,200,50,.0) 70%)}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.sortbox canvas{width:100%;border-radius:12px;display:block}
+.nm2{font-family:'Jua';font-size:20px;color:var(--gold);margin-top:6px}
+ol.chk{list-style:none;padding:0;margin:8px 0}
+ol.chk li{background:#0a1036;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:6px 0}
+ol.chk label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+ol.chk input{width:20px;height:20px;accent-color:var(--gold);margin-top:3px;flex:none}
+code{background:#0a1036;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--mint)}
+details{background:#0a1036;border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0}
+summary{cursor:pointer;font-weight:700;color:var(--gold)}
+.chall{border:2px dashed var(--pink);border-radius:14px;padding:10px 12px;margin:10px 0}
+.badge{display:inline-grid;place-items:center;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff3b0,#ffb82e 60%,#b97a00);font-size:64px;box-shadow:0 0 40px rgba(255,213,74,.7)}
+.reset{background:none;border:0;color:var(--sub);text-decoration:underline;font-size:12px;cursor:pointer;display:block;margin:18px auto 0}
+.fl{display:block;font-weight:700;margin:8px 0}
+.fl input{display:block;width:100%;margin-top:5px;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:#0a1036;color:#fff;font:500 16px 'Noto Sans KR'}
+.fl input:focus{outline:0;border-color:var(--gold)}
+.chars{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chr{background:var(--card2);border:2px solid var(--line);border-radius:16px;padding:8px 4px;color:var(--txt);font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.35}
+.chr b{font-family:'Jua';font-weight:400;font-size:17px;margin-top:2px}.chr span{font-size:12px;color:var(--sub)}
+.chr.on{border-color:var(--gold);background:#3b3410;box-shadow:0 0 16px rgba(255,213,74,.4)}
+.err{color:var(--bad);font-weight:700;min-height:20px;text-align:center}
+.reward{background:linear-gradient(90deg,#4a3a00,#2a1f55);border:2px solid var(--gold);border-radius:14px;padding:10px 12px;margin-top:8px;font-weight:700;text-align:center;animation:pop .5s}
+@keyframes pop{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.opt:disabled{color:var(--txt);cursor:not-allowed}
+.stk{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.stk span{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:22px;background:#0a1036;border:1px solid var(--line)}
+.stk span.no{opacity:.25;filter:grayscale(1)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+select{display:block;width:100%;margin-top:5px;padding:12px 10px;border-radius:12px;border:2px solid var(--line);background:#0a1036;color:#fff;font:500 16px 'Noto Sans KR'}
+.dexc{background:linear-gradient(160deg,#1d2a74,#0e1538);border:2px solid var(--gold);border-radius:16px;padding:12px 14px;margin:10px 0;box-shadow:0 0 14px rgba(255,213,74,.18)}
+.dexc .dh{display:flex;justify-content:space-between;align-items:center;font-size:18px}
+.dexc .dh b{font-family:'Jua';font-weight:400;color:var(--gold);font-size:20px}
+.dexc .dg{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+.dexc .dg span{background:#0a1036;border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:12.5px;color:var(--mint);font-weight:700}
+.dexc .nt{font-size:14px;color:#dfe6ff}
+.del{background:none;border:1px solid var(--line);border-radius:10px;color:var(--sub);padding:3px 9px;cursor:pointer;font-size:13px}
+textarea.ta{width:100%;height:150px;margin-top:8px;border-radius:12px;border:2px solid var(--line);background:#0a1036;color:#fff;padding:10px;font:13px/1.5 'Noto Sans KR'}
+.srow{background:#0e1538;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:8px 0;cursor:pointer}
+.srow.op{border-color:var(--gold);background:#141c4d}
+.srow .sh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.chips{display:flex;gap:5px;margin:6px 0 2px}
+.sc{display:inline-grid;place-items:center;width:30px;height:24px;border-radius:7px;font-size:12px;font-style:normal;font-weight:700;background:#1f2a66;color:#8a97d8}
+.sc.s1{background:#8b5a2b;color:#fff}.sc.s2{background:#9aa6c6;color:#10183f}.sc.s3{background:#ffd54a;color:#3a2a00}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0}
+.sg div{background:#0a1036;border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center}
+.sg b{display:block;font-family:'Jua';font-weight:400;font-size:22px;color:var(--mint)}
+.dtab{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0}.dtab td,.dtab th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
+input.sq{display:block;width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:#0a1036;color:#fff;font:500 15px 'Noto Sans KR';margin-bottom:6px}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div id="app"></div>
+
+<script>
+/* ---------- 유틸 ---------- */
+const app=document.getElementById('app');
+const rnd=seed=>{let s=seed%2147483647;if(s<=0)s+=2147483646;return()=>(s=s*16807%2147483647)/2147483647;};
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const SAVE='starQuestV1';
+let S={unlocked:1,stars:[0,0,0,0,0],final:false,profile:null,char:0,coins:0,stk:[],cards:[],qa:{},att:[0,0,0,0,0]};
+try{const v=JSON.parse(localStorage.getItem(SAVE));if(v&&v.stars)S=Object.assign(S,v);}catch(e){}
+const save=()=>{try{localStorage.setItem(SAVE,JSON.stringify(S));}catch(e){}try{sync();}catch(e){}};
+
+/* ---------- 배경 별 ---------- */
+(function(){
+  const cv=document.getElementById('bg'),c=cv.getContext('2d');let W,H,st=[];
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;st=[];const r=rnd(11);for(let i=0;i<110;i++)st.push([r()*W,r()*H,r()*1.4+.3,r()*6.28,r()*1.5+.5]);}
+  size();addEventListener('resize',size);
+  function loop(t){c.clearRect(0,0,W,H);for(const s of st){c.globalAlpha=.35+.65*Math.abs(Math.sin(t/1000*s[4]+s[3]));c.fillStyle='#fff';c.beginPath();c.arc(s[0],s[1],s[2],0,7);c.fill();}c.globalAlpha=1;requestAnimationFrame(loop);}
+  requestAnimationFrame(loop);
+})();
+
+/* ---------- 캐릭터 ---------- */
+function astro(m='normal',w=84){
+  const E='#7fffd4';
+  const eye=m==='happy'?`<path d="M43 52q6-8 12 0M65 52q6-8 12 0" stroke="${E}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`
+   :m==='sad'?`<circle cx="49" cy="54" r="4.5" fill="${E}"/><circle cx="71" cy="54" r="4.5" fill="${E}"/><path d="M42 44l13 5M78 44l-13 5" stroke="${E}" stroke-width="2.6" stroke-linecap="round"/>`
+   :`<circle cx="49" cy="52" r="5" fill="${E}"/><circle cx="71" cy="52" r="5" fill="${E}"/>`;
+  const mouth=m==='happy'?`<path d="M50 63q10 11 20 0z" fill="${E}"/>`:m==='sad'?`<path d="M52 70q8-8 16 0" stroke="${E}" stroke-width="3" fill="none" stroke-linecap="round"/>`:`<path d="M52 64q8 7 16 0" stroke="${E}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  const arms=m==='happy'?`<path d="M38 98 L20 78" stroke="#e8f0ff" stroke-width="10" stroke-linecap="round"/><path d="M82 98 L100 78" stroke="#e8f0ff" stroke-width="10" stroke-linecap="round"/>`
+   :`<path d="M38 100 L24 112" stroke="#e8f0ff" stroke-width="10" stroke-linecap="round"/><path d="M82 100 L96 112" stroke="#e8f0ff" stroke-width="10" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 120 140" width="${w}" height="${w*140/120}" aria-label="우주인 루미">
+  <line x1="60" y1="16" x2="60" y2="5" stroke="#ccd6ff" stroke-width="3"/><circle cx="60" cy="5" r="5" fill="#ffd54a"/>
+  ${arms}
+  <rect x="38" y="88" width="44" height="38" rx="16" fill="#ff8a4c"/><rect x="48" y="99" width="24" height="12" rx="5" fill="rgba(255,255,255,.3)"/>
+  <rect x="40" y="122" width="15" height="14" rx="6" fill="#e8f0ff"/><rect x="65" y="122" width="15" height="14" rx="6" fill="#e8f0ff"/>
+  <circle cx="60" cy="54" r="40" fill="#f4f7ff" stroke="#aab8e8" stroke-width="3"/>
+  <ellipse cx="60" cy="54" rx="31" ry="27" fill="#16224f"/>
+  ${eye}${mouth}
+  <circle cx="40" cy="63" r="4" fill="#ff8fb1" opacity=".65"/><circle cx="80" cy="63" r="4" fill="#ff8fb1" opacity=".65"/>
+  <ellipse cx="45" cy="39" rx="8" ry="4" fill="#fff" opacity=".35" transform="rotate(-30 45 39)"/></svg>`;
+}
+
+const CH=[{n:'루미',d:'용감한 우주인'},{n:'별똥이',d:'반짝반짝 별'},{n:'로보',d:'똑똑한 로봇'},{n:'달토끼',d:'달나라 토끼'}];
+const cur=()=>CH[S.char]||CH[0];
+function face(m,cx,cy,sp,col){
+  const e=m==='happy'?`<path d="M${cx-sp-6} ${cy}q6-8 12 0M${cx+sp-6} ${cy}q6-8 12 0" stroke="${col}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`
+   :m==='sad'?`<circle cx="${cx-sp}" cy="${cy+2}" r="4.2" fill="${col}"/><circle cx="${cx+sp}" cy="${cy+2}" r="4.2" fill="${col}"/><path d="M${cx-sp-6} ${cy-8}l12 5M${cx+sp+6} ${cy-8}l-12 5" stroke="${col}" stroke-width="2.4" stroke-linecap="round"/>`
+   :`<circle cx="${cx-sp}" cy="${cy}" r="4.5" fill="${col}"/><circle cx="${cx+sp}" cy="${cy}" r="4.5" fill="${col}"/>`;
+  const o=m==='happy'?`<path d="M${cx-9} ${cy+10}q9 11 18 0z" fill="${col}"/>`:m==='sad'?`<path d="M${cx-8} ${cy+19}q8-8 16 0" stroke="${col}" stroke-width="3" fill="none" stroke-linecap="round"/>`:`<path d="M${cx-8} ${cy+12}q8 7 16 0" stroke="${col}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  return e+o;
+}
+function starC(m,w){return `<svg viewBox="0 0 100 100" width="${w}" height="${w}"><polygon points="50,4 62,36 96,37 69,58 79,93 50,73 21,93 31,58 4,37 38,36" fill="#ffd54a" stroke="#ffb02e" stroke-width="4" stroke-linejoin="round"/>${face(m,50,50,10,'#3a2a00')}<circle cx="38" cy="60" r="3.5" fill="#ff8fb1" opacity=".7"/><circle cx="62" cy="60" r="3.5" fill="#ff8fb1" opacity=".7"/></svg>`;}
+function robot(m,w){return `<svg viewBox="0 0 120 140" width="${w}" height="${w*140/120}"><line x1="60" y1="14" x2="60" y2="4" stroke="#ccd6ff" stroke-width="3"/><circle cx="60" cy="4" r="5" fill="#ff5c7a"/><rect x="36" y="84" width="48" height="42" rx="14" fill="#6c8cff"/><rect x="48" y="96" width="24" height="14" rx="4" fill="rgba(255,255,255,.35)"/><path d="M36 96L22 108M84 96L98 108" stroke="#c9d6ff" stroke-width="9" stroke-linecap="round"/><rect x="42" y="122" width="14" height="14" rx="5" fill="#c9d6ff"/><rect x="64" y="122" width="14" height="14" rx="5" fill="#c9d6ff"/><rect x="22" y="14" width="76" height="68" rx="20" fill="#c9d6ff" stroke="#8fa3e8" stroke-width="3"/><rect x="31" y="24" width="58" height="48" rx="13" fill="#16224f"/>${face(m,60,44,13,'#7fffd4')}</svg>`;}
+function rabbit(m,w){return `<svg viewBox="0 0 120 140" width="${w}" height="${w*140/120}"><ellipse cx="43" cy="22" rx="10" ry="25" fill="#fff"/><ellipse cx="43" cy="24" rx="5" ry="17" fill="#ffb3cb"/><ellipse cx="77" cy="22" rx="10" ry="25" fill="#fff"/><ellipse cx="77" cy="24" rx="5" ry="17" fill="#ffb3cb"/><ellipse cx="60" cy="110" rx="28" ry="24" fill="#b8a2ff"/><circle cx="60" cy="62" r="38" fill="#fff" stroke="#e1e6ff" stroke-width="3"/>${face(m,60,58,14,'#3a2a4a')}<circle cx="38" cy="70" r="5" fill="#ff8fb1" opacity=".6"/><circle cx="82" cy="70" r="5" fill="#ff8fb1" opacity=".6"/></svg>`;}
+function charSVG(c,m,w){return c===1?starC(m,w):c===2?robot(m,w):c===3?rabbit(m,w):astro(m,w);}
+function lumi(m='normal',w=84){return charSVG(S.char|0,m,w);}
+const STK=['🪐','🌙','☄️','🛰️','👽','🚀','🌟','🔭','🌠','☀️','🛸','🌌','🌍','🧑‍🚀','💫','🌕'];
+function pet(w=44){return `<svg viewBox="0 0 100 100" width="${w}" height="${w}"><polygon points="50,5 61,36 95,37 68,57 78,92 50,72 22,92 32,57 5,37 39,36" fill="#ffd54a" stroke="#ffb02e" stroke-width="4" stroke-linejoin="round"/><circle cx="42" cy="52" r="3.5" fill="#3a2a00"/><circle cx="58" cy="52" r="3.5" fill="#3a2a00"/><path d="M44 60q6 6 12 0" stroke="#3a2a00" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;}
+
+/* ---------- 천체 그림 (성운·성단·은하) ---------- */
+function drawObj(cv,k){
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height,r=rnd(k.length*131+9);
+  c.fillStyle='#03040f';c.fillRect(0,0,W,H);
+  const blob=(x,y,rad,col)=>{const g=c.createRadialGradient(x,y,0,x,y,rad);g.addColorStop(0,col);g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,rad,0,7);c.fill();};
+  const dot=(x,y,s,col)=>{c.fillStyle=col;c.beginPath();c.arc(x,y,s,0,7);c.fill();};
+  const bgs=n=>{for(let i=0;i<n;i++)dot(r()*W,r()*H,r()*1.1+.2,'rgba(255,255,255,'+(.3+r()*.6)+')');};
+  if(k==='emis'||k==='refl'){
+    const col=k==='emis'?[255,90,130]:[110,160,255];
+    for(let i=0;i<16;i++)blob(W*.5+(r()-.5)*W*.6,H*.5+(r()-.5)*H*.55,W*.14+r()*W*.14,`rgba(${col[0]},${col[1]+(r()*50|0)},${col[2]},.42)`);
+    blob(W*.5,H*.5,W*.1,'rgba(255,255,255,.75)');bgs(40);
+  }else if(k==='dark'){
+    blob(W*.5,H*.4,W*.55,'rgba(255,110,90,.5)');blob(W*.4,H*.6,W*.4,'rgba(255,150,120,.35)');bgs(60);
+    c.fillStyle='rgba(6,3,12,.96)';c.beginPath();c.moveTo(W*.42,H);c.lineTo(W*.44,H*.62);c.quadraticCurveTo(W*.38,H*.36,W*.55,H*.26);c.quadraticCurveTo(W*.7,H*.28,W*.67,H*.45);c.lineTo(W*.62,H*.52);c.lineTo(W*.63,H*.66);c.lineTo(W*.64,H);c.closePath();c.fill();
+  }else if(k==='open'){
+    bgs(25);
+    for(let i=0;i<26;i++){const x=W*.5+(r()-.5)*W*.7,y=H*.5+(r()-.5)*H*.7;blob(x,y,10,'rgba(150,190,255,.5)');dot(x,y,1.6+r()*1.6,'#dff0ff');}
+  }else if(k==='glob'){
+    bgs(15);blob(W/2,H/2,W*.3,'rgba(255,220,150,.35)');
+    for(let i=0;i<520;i++){const a=(r()+r()+r()-1.5)/1.5,b=(r()+r()+r()-1.5)/1.5;dot(W/2+a*W*.3,H/2+b*H*.4,.6+r()*.9,'rgba(255,'+(215+(r()*30|0))+',160,'+(.5+r()*.5)+')');}
+  }else{
+    bgs(30);c.save();c.translate(W/2,H/2);c.rotate(-.5);
+    for(let arm=0;arm<2;arm++)for(let i=0;i<380;i++){const t=i/380,rad=W*.06+t*W*.38,ang=t*3.4+arm*Math.PI;dot(Math.cos(ang)*rad+(r()-.5)*10,(Math.sin(ang)*rad+(r()-.5)*10)*.48,.6+r()*1.1,t<.4?'rgba(255,235,180,.9)':'rgba(170,200,255,.85)');}
+    blob(0,0,W*.17,'rgba(255,230,160,.9)');c.restore();
+  }
+}
+
+/* ---------- 스텔라리움 미션 ---------- */
+const MISSION={
+ m1:{tips:true,intro:'스텔라리움에서 진짜 별의 거리를 확인해 봐요!',todo:['스텔라리움 웹(또는 앱)을 열고, 위치를 <b>대한민국 서울</b>, 시간을 <b>밤</b>으로 맞춰요.','🔍 검색창에 <code>Sirius</code> 를 입력해 시리우스를 선택해요.','별 정보 창에서 <b>거리(Distance)</b>를 찾아보세요. 약 8.6광년이에요.','이번엔 <code>Polaris</code>(북극성)를 검색해 거리를 비교해 보세요.'],q:'시리우스까지 거리가 약 2.6pc라면, 연주시차는 약 몇 ″일까요?',a:'p = 1 ÷ 2.6 ≈ <b>0.38″</b> 예요. 북극성은 훨씬 멀어서(약 130pc) 연주시차가 겨우 0.0075″ 정도로 아주 작답니다.'},
+ m2:{intro:'같은 하늘에서 두 별의 밝기를 눈으로 비교해 봐요.',todo:['<code>Sirius</code> 를 검색해서 <b>겉보기 등급(Magnitude)</b>을 확인해요. (약 −1.46등급)','<code>Polaris</code> 도 검색해 등급을 확인해요. (약 2.0등급)','두 별의 <b>거리</b>도 비교해요. 시리우스 8.6광년 vs 북극성 약 430광년','화면을 움직여 하늘에서 어느 별이 더 밝게 보이는지 확인해요.'],q:'북극성은 시리우스보다 50배나 멀리 있는데, 사실은 훨씬 더 "실제로 밝은 별"이에요. 왜 이런 일이 가능할까요?',a:'별의 <b>보이는 밝기는 거리의 제곱에 반비례</b>하기 때문이에요. 북극성은 실제로 매우 밝지만 너무 멀어서 어둡게 보여요. 다음 행성(등급별)에서 <b>절대등급</b>으로 확인해요!'},
+ m3:{intro:'세 별을 조사해서 나만의 별 도감 카드를 만들어 봐요.',todo:['<code>Sirius</code>, <code>Rigel</code>, <code>Betelgeuse</code> 를 차례로 검색해요.','각 별의 <b>겉보기 등급</b>과 <b>거리</b>를 메모해요.','오리온자리에서 리겔(푸른 별)과 베텔게우스(붉은 별)의 위치를 찾아요.','겉보기 등급 순서와 거리를 함께 놓고 비교해요.'],q:'세 별 중 가장 멀리 있지만 실제로는 가장 밝은 별은 무엇일까요?',a:'<b>리겔</b>이에요. 거리는 약 860광년이지만 절대등급이 약 −7.8등급으로 매우 밝아요. 시리우스는 가까워서 가장 밝게 "보일" 뿐이에요.'},
+ m4:{intro:'하늘의 4가지 멋진 천체를 직접 찾아가 봐요.',todo:['<code>M42</code> 검색 → 오리온 대성운 (오리온자리 칼 부분)','<code>M45</code> 검색 → 플레이아데스(좀생이별)','<code>M13</code> 검색 → 헤르쿨레스자리 구상 성단','<code>M31</code> 검색 → 안드로메다 은하'],q:'M42, M45, M13, M31은 각각 성운·산개성단·구상성단·은하 중 무엇일까요?',a:'<b>M42 = 성운</b>(발광 성운), <b>M45 = 산개 성단</b>, <b>M13 = 구상 성단</b>, <b>M31 = 은하</b> 예요.'},
+ m5:{intro:'스텔라리움으로 우주의 "과거"를 바라봐요.',todo:['<code>M31</code> 을 검색해 안드로메다 은하로 이동해요.','거리를 확인해요. 약 <b>254만 광년</b>이에요.','시야각(FOV)을 줄여 확대해 은하의 모양을 관찰해요.','설정에서 <b>은하수(Milky Way)</b>를 켜고 밤하늘의 띠를 찾아봐요.'],q:'지금 보이는 안드로메다 은하의 빛은 언제 출발한 빛일까요?',a:'거리가 254만 광년이므로 빛이 약 <b>254만 년 전</b>에 출발한 거예요. 우주 나이(138억 년)와 비교하면 우리는 항상 "과거의 우주"를 보고 있어요. 밤하늘의 은하수 띠는 <b>우리은하를 안에서 본 모습</b>이에요!'}
+};
+function missionHTML(k){
+  const m=MISSION[k];
+  const tips=m.tips?`<details><summary>🔧 스텔라리움 처음 쓰는 방법</summary><ul class="pts"><li><b>웹</b>: stellarium-web.org (무료, 설치 필요 없음)</li><li><b>앱</b>: 스마트폰은 "Stellarium Mobile", PC는 "Stellarium" 프로그램</li><li>🔍 <b>검색</b>으로 별 이름을 입력하고 선택하면 그 별로 이동해요.</li><li>손가락(마우스)으로 드래그하면 하늘이 돌고, 두 손가락(휠)으로 확대/축소해요.</li><li>낮이면 설정에서 <b>대기(Atmosphere)</b>를 끄거나 시간을 밤으로 바꿔요.</li></ul></details>`:'';
+  return `<h3>🌌 스텔라리움 미션</h3><p>${m.intro}</p>${tips}<ol class="chk">${m.todo.map(x=>`<li><label><input type="checkbox"><span>${x}</span></label></li>`).join('')}</ol>
+  <div class="chall"><b>🎯 도전 질문</b><br>${m.q}<details><summary>정답 보기</summary>${m.a}</details></div>
+  <a class="btn mint" href="https://stellarium-web.org/" target="_blank" rel="noopener">🔭 스텔라리움 웹 열기 ↗</a>
+  <p class="small center">앱에서는 같은 이름을 🔍검색에 입력하면 돼요. 확인이 끝나면 아래 버튼으로 돌아오세요!</p>`;
+}
+
+/* ---------- 위젯 ---------- */
+const WIDGETS={};
+
+WIDGETS.parallax=el=>{
+  el.innerHTML=`<canvas class="cv" width="320" height="300"></canvas>
+  <div class="ctl"><label><span>별까지 거리</span><span class="dv hl"></span></label><input class="d" type="range" min="1" max="10" step="0.5" value="2"></div>
+  <div class="ctl"><label><span>지구 위치</span><span class="sub">왼쪽 1월 ↔ 오른쪽 7월</span></label><input class="t" type="range" min="-1" max="1" step="0.02" value="-1"></div>
+  <div class="read"></div><p class="small">※ 그림은 실제 비율이 아니에요.</p>`;
+  const cv=el.querySelector('canvas'),c=cv.getContext('2d'),D=el.querySelector('.d'),T=el.querySelector('.t'),R=el.querySelector('.read'),DV=el.querySelector('.dv');
+  const r=rnd(5),bg=[];for(let i=0;i<34;i++)bg.push([r()*320,208+r()*84,r()*1.3+.4]);
+  const circ=(x,y,rad,col)=>{c.fillStyle=col;c.beginPath();c.arc(x,y,rad,0,7);c.fill();};
+  const star=(x,y,rad)=>{c.fillStyle='rgba(255,213,74,.25)';c.beginPath();c.arc(x,y,rad+6,0,7);c.fill();circ(x,y,rad,'#ffd54a');};
+  const txt=(s,x,y,col='#cfd8ff',al='center')=>{c.fillStyle=col;c.font='700 12px "Noto Sans KR"';c.textAlign=al;c.fillText(s,x,y);};
+  function draw(){
+    const d=+D.value,t=+T.value,p=1/d;DV.textContent=d+' pc';
+    c.clearRect(0,0,320,300);c.fillStyle='#0b1238';c.fillRect(0,0,320,190);c.fillStyle='#050824';c.fillRect(0,198,320,102);c.strokeStyle='#2c3a85';c.strokeRect(.5,198.5,319,101);
+    const cx=160,gy=164,Rr=62,ex=cx+t*Rr,sy=gy-14*d;
+    c.setLineDash([4,4]);c.strokeStyle='#4e63c9';c.beginPath();c.ellipse(cx,gy,Rr,12,0,0,7);c.stroke();
+    c.strokeStyle='rgba(255,255,255,.3)';c.beginPath();c.moveTo(cx,gy);c.lineTo(cx,sy);c.stroke();c.setLineDash([]);
+    c.strokeStyle='#7fffd4';c.lineWidth=2;c.beginPath();c.moveTo(ex,gy);c.lineTo(cx,sy);c.stroke();c.lineWidth=1;
+    circ(cx,gy,9,'#ffb02e');circ(ex,gy,6,'#4aa3ff');star(cx,sy,6);
+    txt('태양',cx,gy+34,'#ffb02e');txt('지구',ex,gy+20,'#7cc0ff');txt('별',cx+16,sy+4,'#ffd54a','left');
+    txt('우주를 위에서 본 모습',8,16,'#a9b6e8','left');
+    for(const s of bg)circ(s[0],s[1],s[2],'rgba(255,255,255,.75)');
+    txt('하늘에서 본 모습 (뒤쪽 배경별은 아주 멀어요)',8,214,'#a9b6e8','left');
+    const sh=60*p,y=252;
+    [[cx+sh,'1월'],[cx-sh,'7월']].forEach(([x,l])=>{c.setLineDash([3,3]);c.strokeStyle='#7a89d6';c.beginPath();c.arc(x,y,7,0,7);c.stroke();c.setLineDash([]);txt(l,x,y+24,'#a9b6e8');});
+    star(cx-t*sh,y,5);
+    R.innerHTML=`연주시차 p = 1 ÷ ${d} = <b>${p.toFixed(2)}″</b><br>거리 ${d}pc ≈ ${(d*3.26).toFixed(1)}광년 · 6개월간 위치 변화각 = <b>${(2*p).toFixed(2)}″</b>`;
+  }
+  D.oninput=T.oninput=draw;draw();
+};
+
+WIDGETS.bright=el=>{
+  el.innerHTML=`<canvas class="cv" width="320" height="230"></canvas>
+  <div class="ctl"><label><span>별까지 거리</span><span class="dv hl"></span></label><input class="d" type="range" min="1" max="5" step="1" value="1"></div><div class="read"></div>`;
+  const cv=el.querySelector('canvas'),c=cv.getContext('2d'),D=el.querySelector('.d'),R=el.querySelector('.read'),DV=el.querySelector('.dv');
+  function draw(){
+    const n=+D.value;DV.textContent=n+'배';c.clearRect(0,0,320,230);
+    const cy=115,x0=112,cell=40,side=n*cell;
+    const g=c.createRadialGradient(40,cy,0,40,cy,36);g.addColorStop(0,'#fff');g.addColorStop(.35,'#ffe27a');g.addColorStop(1,'rgba(255,200,50,0)');c.fillStyle=g;c.beginPath();c.arc(40,cy,36,0,7);c.fill();
+    c.fillStyle='rgba(255,226,122,.12)';c.beginPath();c.moveTo(40,cy);c.lineTo(x0,cy-side/2);c.lineTo(x0,cy+side/2);c.closePath();c.fill();
+    const a=Math.max(.07,1/(n*n));
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){c.fillStyle=`rgba(255,226,122,${a})`;c.fillRect(x0+j*cell,cy-side/2+i*cell,cell-2,cell-2);}
+    c.strokeStyle='#fff';c.lineWidth=2;c.strokeRect(x0,cy-side/2,cell-2,cell-2);c.lineWidth=1;
+    c.fillStyle='#cfd8ff';c.font='700 12px "Noto Sans KR"';c.textAlign='left';c.fillText('별',30,cy+54);
+    c.fillText('흰 테두리 1칸 = 눈동자가 받는 빛',8,18);
+    R.innerHTML=`거리 <b>${n}배</b> → 빛이 <b>${n}×${n} = ${n*n}칸</b>으로 퍼져요.<br>한 칸의 밝기 = <b>${n===1?'1':'1/'+(n*n)}</b> (처음 밝기의 ${(100/(n*n)).toFixed(n===1?0:1)}%)`;
+  }
+  D.oninput=draw;draw();
+};
+
+WIDGETS.ladder=el=>{
+  el.innerHTML=`<div class="ladder"><div><div class="glow"></div><b>1등급 별</b></div><div><div class="glow" id="g2"></div><b class="g2t"></b></div></div>
+  <div class="ctl"><label><span>등급 차이</span><span class="dv hl"></span></label><input class="d" type="range" min="0" max="5" step="1" value="1"></div><div class="read"></div>`;
+  const D=el.querySelector('.d'),G=el.querySelector('#g2'),T=el.querySelector('.g2t'),R=el.querySelector('.read'),DV=el.querySelector('.dv');
+  function draw(){
+    const n=+D.value,k=Math.pow(100,n/5);DV.textContent=n+'등급';
+    G.style.opacity=Math.max(.1,1/k);G.style.transform=`scale(${Math.max(.5,1-n*.1)})`;T.textContent=(1+n)+'등급 별';
+    R.innerHTML=n===0?'등급이 같으면 밝기도 같아요.':`1등급 별은 ${1+n}등급 별보다 약 <b>${k<10?k.toFixed(1):Math.round(k)}배</b> 밝아요. (1등급 차 ≈ 2.5배, 5등급 차 = 100배)`;
+  }
+  D.oninput=draw;draw();
+};
+
+WIDGETS.rank=el=>{
+  const D=[['태양',-26.74,4.83,'약 1.5억 km'],['시리우스',-1.46,1.42,'8.6광년'],['베가',0.03,0.58,'25광년'],['북극성',1.98,-3.6,'약 430광년'],['베텔게우스',0.42,-5.85,'약 550광년'],['리겔',0.13,-7.84,'약 860광년']];
+  el.innerHTML=`<div class="tog"><button class="on" data-m="1">👀 지금 보이는 밝기<br><span class="sub">겉보기등급</span></button><button data-m="2">📏 모두 10pc에 놓으면<br><span class="sub">절대등급</span></button></div>
+  <div class="rank">${D.map((d,i)=>`<div class="row" style="top:${i*50}px"><span class="rk">${i+1}</span><span class="nm">${d[0]}</span><span class="mg"></span><small>${d[3]}</small></div>`).join('')}</div><div class="read"></div>`;
+  const rows=[...el.querySelectorAll('.row')],R=el.querySelector('.read');
+  function upd(m){
+    el.querySelectorAll('.tog button').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));
+    const ord=D.map((_,i)=>i).sort((a,b)=>D[a][m]-D[b][m]);
+    ord.forEach((idx,rk)=>{const row=rows[idx];row.style.top=rk*50+'px';row.querySelector('.rk').textContent=rk+1;row.querySelector('.mg').textContent=(m===1?'겉보기 ':'절대 ')+(D[idx][m]>0?'+':'')+D[idx][m]+'등급';});
+    R.innerHTML=m===1?'하늘에서는 <b>태양 &gt; 시리우스 &gt; …</b> 순서로 밝게 보여요. 태양은 가장 가까워서 압도적이에요!':'같은 거리(10pc)에 세우면 순서가 뒤집혀요! <b>리겔·베텔게우스·북극성</b>이 훨씬 밝고, 태양은 오히려 어두운 편이에요. 이게 <b>실제 밝기</b>예요.';
+  }
+  el.querySelectorAll('.tog button').forEach(b=>b.onclick=()=>upd(+b.dataset.m));upd(1);
+};
+
+WIDGETS.types=el=>{
+  const T=[['emis','성운','가스·먼지 구름'],['open','산개 성단','젊은 별이 느슨하게'],['glob','구상 성단','늙은 별이 공 모양으로'],['gal','은하','별 수천억 개의 집합']];
+  el.innerHTML=`<div class="icons">${T.map(t=>`<div class="ic"><canvas width="150" height="110" data-k="${t[0]}"></canvas><b>${t[1]}</b>${t[2]}</div>`).join('')}</div>`;
+  el.querySelectorAll('canvas').forEach(cv=>drawObj(cv,cv.dataset.k));
+};
+
+WIDGETS.sort=el=>{
+  const items=[
+   {k:'emis',n:'오리온 대성운',clue:'오리온자리 "칼" 부분! 붉게 빛나는 가스 구름이에요.',a:'성운',ex:'가스와 먼지 구름이에요. 근처 별빛 에너지를 받아 스스로 빛나는 <b>발광 성운</b>이에요.'},
+   {k:'open',n:'플레이아데스(좀생이별)',clue:'푸른 젊은 별 수백 개가 느슨하게 모여 있어요.',a:'산개성단',ex:'젊고 푸른 별 수십~수만 개가 <b>불규칙하게 흩어져</b> 모인 <b>산개 성단</b>이에요.'},
+   {k:'glob',n:'M13 (헤르쿨레스자리)',clue:'수십만 개의 늙은 별이 공 모양으로 빽빽해요.',a:'구상성단',ex:'늙고 붉은 별 수만~수십만 개가 <b>공 모양으로 빽빽이</b> 모인 <b>구상 성단</b>이에요.'},
+   {k:'gal',n:'안드로메다 은하',clue:'약 254만 광년 거리, 소용돌이 모양으로 별이 수천억 개!',a:'은하',ex:'별·가스·먼지가 수천억 개 이상 모인 거대한 집단, <b>은하</b>예요. 안드로메다는 나선 은하랍니다.'},
+   {k:'dark',n:'말머리 성운',clue:'뒤쪽의 밝은 빛 앞에서 말 머리 모양으로 까맣게 보여요.',a:'성운',ex:'뒤쪽 별빛을 가려서 검게 보이는 <b>암흑 성운</b>이에요. (성운의 한 종류!)'}];
+  let i=0,ok=0,done=false;const cats=['성운','산개성단','구상성단','은하'];
+  function show(){
+    if(i>=items.length){el.innerHTML=`<div class="center"><div class="bigstars" style="font-size:30px">${ok}/${items.length} 정답!</div><p>${ok===5?'완벽해요! 천체 분류 마스터 🌟':'잘했어요! 위 설명을 한 번 더 읽고 퀴즈에 도전해요.'}</p></div>`;return;}
+    const it=items[i];done=false;
+    el.innerHTML=`<div class="sortbox"><p class="small">천체 ${i+1} / ${items.length} — 어떤 종류일까요?</p><canvas width="280" height="170"></canvas><div class="nm2">${it.n}</div><p>${it.clue}</p><div class="cats">${cats.map(c=>`<button class="opt" data-c="${c}">${c==='산개성단'?'산개 성단':c==='구상성단'?'구상 성단':c}</button>`).join('')}</div><div id="fb"></div></div>`;
+    drawObj(el.querySelector('canvas'),it.k);
+    el.querySelectorAll('.cats .opt').forEach(b=>b.onclick=()=>{
+      if(done)return;done=true;const good=b.dataset.c===it.a;if(good)ok++;
+      el.querySelectorAll('.cats .opt').forEach(x=>{if(x.dataset.c===it.a)x.classList.add('good');});if(!good)b.classList.add('bad');
+      el.querySelector('#fb').innerHTML=`<div class="ex">${good?'🎉 정답!':'😢 아쉬워요!'} ${it.ex}</div><button class="btn ghost" id="nx">${i<items.length-1?'다음 천체 ▶':'결과 보기'}</button>`;
+      el.querySelector('#nx').onclick=()=>{i++;show();};
+    });
+  }
+  show();
+};
+
+WIDGETS.bang=el=>{
+  const SG=[
+   {t:'빅뱅 (0초)',d:'아주 작고 뜨겁고 밀도가 매우 높은 한 점에서 대폭발이 일어나 우주가 팽창하기 시작했어요.',s:.05,c:['#ffffff','#fff1b0'],n:0},
+   {t:'빅뱅 후 약 3분',d:'온도가 내려가면서 수소와 헬륨의 원자핵이 만들어졌어요. 질량비로 수소 약 75%, 헬륨 약 25%!',s:.22,c:['#ffd27a','#ff8a2a'],n:0},
+   {t:'빅뱅 후 약 38만 년',d:'우주가 식어 원자가 만들어지고, 빛이 직진할 수 있게 됐어요. 이때 나온 빛이 지금도 관측되는 <b>우주 배경 복사</b>예요.',s:.4,c:['#ff9a52','#a8321a'],n:0},
+   {t:'빅뱅 후 수억 년',d:'가스가 뭉쳐 <b>최초의 별과 은하</b>가 탄생했어요.',s:.58,c:['#241a4a','#0d0a24'],n:60},
+   {t:'빅뱅 후 약 92억 년',d:'(지금부터 약 46억 년 전) <b>태양과 태양계</b>가 탄생했어요.',s:.8,c:['#1c1a45','#080a1e'],n:130},
+   {t:'빅뱅 후 약 138억 년',d:'현재의 우주! 우주는 지금도 계속 <b>팽창</b>하고 있어요.',s:1,c:['#181c4e','#05071a'],n:220}];
+  el.innerHTML=`<canvas class="cv" width="320" height="210"></canvas><div class="ctl"><label><span>우주의 시간 여행</span><span class="dv hl"></span></label><input class="d" type="range" min="0" max="5" step="1" value="0"></div><div class="read"></div>`;
+  const cv=el.querySelector('canvas'),c=cv.getContext('2d'),D=el.querySelector('.d'),R=el.querySelector('.read'),DV=el.querySelector('.dv');
+  const r=rnd(77),pts=[];for(let i=0;i<220;i++){const a=r()*6.283,q=Math.sqrt(r());pts.push([Math.cos(a)*q,Math.sin(a)*q,r()]);}
+  function draw(){
+    const g=SG[+D.value];DV.textContent=g.t;c.clearRect(0,0,320,210);c.fillStyle='#03040f';c.fillRect(0,0,320,210);
+    const rad=8+g.s*92,cx=160,cy=105,gr=c.createRadialGradient(cx,cy,0,cx,cy,rad);gr.addColorStop(0,g.c[0]);gr.addColorStop(1,g.c[1]);
+    c.fillStyle=gr;c.beginPath();c.arc(cx,cy,rad,0,7);c.fill();c.strokeStyle='rgba(255,255,255,.35)';c.stroke();
+    for(let i=0;i<g.n;i++){const p=pts[i];c.fillStyle=p[2]>.8?'#ffe9a8':'#cfe0ff';c.beginPath();c.arc(cx+p[0]*rad*.95,cy+p[1]*rad*.95,p[2]>.8?1.8:1.1,0,7);c.fill();}
+    c.fillStyle='#fff';c.font='700 12px "Noto Sans KR"';c.textAlign='left';c.fillText('우주의 크기(모형)',8,18);
+    R.innerHTML=`<b>${g.t}</b><br>${g.d}`;
+  }
+  D.oninput=draw;draw();
+};
+
+WIDGETS.hubble=el=>{
+  el.innerHTML=`<canvas class="cv" width="320" height="260"></canvas><div class="ctl"><label><span>우주를 팽창시켜 보세요</span><span class="dv hl"></span></label><input class="d" type="range" min="1" max="2.5" step="0.05" value="1"></div><div class="read"></div>`;
+  const cv=el.querySelector('canvas'),c=cv.getContext('2d'),D=el.querySelector('.d'),R=el.querySelector('.read'),DV=el.querySelector('.dv');
+  const G=[[1,.3,22],[2.4,.4,32],[4.1,.2,44],[5.2,.35,26],[3.3,.5,48],[0.2,.45,38],[5.9,.25,20],[2,.15,50]].map(([a,b,r])=>[Math.cos(a)*r,Math.sin(a)*r*.9,r]);
+  function draw(){
+    const s=+D.value,cx=160,cy=130;DV.textContent=(s===1?'처음':'×'+s.toFixed(2));c.clearRect(0,0,320,260);c.fillStyle='#03040f';c.fillRect(0,0,320,260);
+    for(const [x,y] of G){c.strokeStyle='rgba(255,255,255,.2)';c.setLineDash([2,3]);c.beginPath();c.arc(cx+x,cy+y,3,0,7);c.stroke();c.setLineDash([]);}
+    c.lineWidth=2;
+    for(const [x,y,r] of G){
+      const nx=cx+x*s,ny=cy+y*s;
+      if(s>1.02){c.strokeStyle='#ff8fb1';c.beginPath();c.moveTo(cx+x,cy+y);c.lineTo(nx,ny);c.stroke();
+        const a=Math.atan2(y,x);c.fillStyle='#ff8fb1';c.beginPath();c.moveTo(nx,ny);c.lineTo(nx-8*Math.cos(a-.4),ny-8*Math.sin(a-.4));c.lineTo(nx-8*Math.cos(a+.4),ny-8*Math.sin(a+.4));c.fill();}
+      c.fillStyle='#cfe0ff';c.beginPath();c.arc(nx,ny,5,0,7);c.fill();
+    }
+    c.lineWidth=1;c.fillStyle='#ffd54a';c.beginPath();c.arc(cx,cy,7,0,7);c.fill();c.fillStyle='#ffd54a';c.font='700 12px "Noto Sans KR"';c.textAlign='center';c.fillText('우리은하',cx,cy+22);
+    const near=G.reduce((a,b)=>a[2]<b[2]?a:b),far=G.reduce((a,b)=>a[2]>b[2]?a:b);
+    R.innerHTML=s<=1.02?'슬라이더를 오른쪽으로 움직이면 우주가 팽창해요. 분홍 화살표는 <b>은하가 이동한 거리(= 멀어지는 속도)</b>예요.':`가까운 은하는 <b>${(near[2]*(s-1)).toFixed(0)}</b>만큼, 먼 은하는 <b>${(far[2]*(s-1)).toFixed(0)}</b>만큼 이동! <br>👉 <b>멀리 있는 은하일수록 더 빨리 멀어져요.</b>`;
+  }
+  D.oninput=draw;draw();
+};
+
+/* ---------- 학습 내용 ---------- */
+const ST=[
+ {n:'시차별',t:'별의 연주시차',c:['#8ff0ff','#2a6bff'],ic:'🔭',sum:'연주시차 p(″)로 거리 d(pc)=1/p. 가까운 별일수록 시차가 커요.',steps:[
+  {m:'happy',say:'엄지손가락으로 우주를 재볼까? <b>시차</b>를 체험해 보자!',h:`<h3>👍 엄지손가락 실험</h3><p>팔을 쭉 뻗고 엄지를 세워 보세요. <b>한쪽 눈씩 번갈아</b> 감으면 엄지가 뒤 배경에 대해 좌우로 움직여 보여요.</p><p>이렇게 <b>관측 위치가 달라서 생기는 위치 변화</b>가 <span class="hl">시차</span>예요. 별도 마찬가지! 지구가 태양 둘레를 <b>공전</b>하면, <b>가까운 별</b>은 멀리 있는 배경별에 대해 위치가 달라 보여요.</p>`},
+  {m:'normal',say:'슬라이더를 움직여서 별이 어떻게 움직이는지 봐!',w:'parallax',h:`<h3>🌍 연주시차 관측</h3><p>지구가 <b>1월 → 7월</b>(6개월)로 이동하면 별의 위치가 달라져요.</p>`},
+  {m:'normal',say:'연주시차로 거리를 계산하는 공식이야!',h:`<h3>📐 연주시차와 거리</h3><p><span class="hl">연주시차(p)</span> = 6개월 간격으로 본 별의 <b>위치 변화각의 ½</b></p><ul class="pts"><li>단위: ″(초). 1° = 3600″</li><li>가까운 별일수록 시차가 <b>커요</b> (거리와 반비례).</li></ul><div class="formula">거리 d(pc) = 1 ÷ p(″)</div><p>연주시차가 <b>1″</b>인 별까지 거리가 <b>1pc(파섹)</b>이고, 약 <b>3.26광년</b>이에요.</p><p>예) 시리우스 p = 0.38″ → d = 1÷0.38 ≈ 2.6pc ≈ 8.6광년</p><p class="small">※ 아주 멀리 있는 별은 시차가 너무 작아 연주시차로 거리를 재기 어려워요.</p>`},
+  {m:'happy',say:'이제 진짜 하늘에서 확인하러 가자!',mission:'m1'}]},
+ {n:'밝기별',t:'거리에 따른 별의 밝기',c:['#ffe27a','#ff8a2a'],ic:'💡',sum:'별의 밝기는 거리의 제곱에 반비례해요.',steps:[
+  {m:'happy',say:'손전등으로 설명할게. 가까우면 눈부시고 멀면 어둡지?',h:`<h3>🔦 멀어질수록 어두워져요</h3><p>같은 손전등도 <b>가까이서 보면 환하고, 멀리서 보면 어둡죠?</b> 별도 똑같아요. 같은 별이라도 <b>멀수록 어둡게</b> 보여요.</p><p>그런데 얼마나 어두워질까요? 다음 장에서 직접 확인해요!</p>`},
+  {m:'normal',say:'거리가 늘면 빛이 퍼지는 넓이는 어떻게 될까?',w:'bright',h:`<h3>📊 빛이 퍼지는 넓이</h3><p>별빛은 사방으로 퍼져요. 거리가 <b>n배</b>가 되면 빛이 퍼지는 넓이는 <b>n×n = n²배</b>가 돼요.</p>`},
+  {m:'normal',say:'핵심 규칙! 꼭 기억해 줘.',h:`<h3>✍️ 밝기 규칙</h3><div class="formula">밝기 ∝ 1 ÷ (거리)²</div><ul class="pts"><li>거리 <b>2배</b> → 밝기 <b>1/4</b></li><li>거리 <b>3배</b> → 밝기 <b>1/9</b></li><li>거리 <b>1/2</b>로 가까워지면 → 밝기 <b>4배</b></li></ul><p>즉 <b>별의 밝기는 거리의 제곱에 반비례</b>해요.</p><p>그래서 "하늘에서 보이는 밝기"만으로는 별이 <b>실제로 얼마나 밝은지</b> 알 수 없어요. 🤔</p>`},
+  {m:'happy',say:'북극성과 시리우스를 비교해 보자. 반전이 있어!',mission:'m2'}]},
+ {n:'등급별',t:'절대등급 · 상대(겉보기)등급',c:['#d9a5ff','#7b3ff2'],ic:'⭐',sum:'등급이 작을수록 밝고, 1등급 차 ≈ 2.5배. 절대등급은 10pc에서의 등급.',steps:[
+  {m:'normal',say:'별의 밝기를 숫자로 나타내는 방법, 등급!',h:`<h3>🏺 별의 등급</h3><p>고대 그리스의 <b>히파르코스</b>는 눈에 보이는 별을 가장 밝은 <b>1등급</b>부터 가장 어두운 <b>6등급</b>까지 나눴어요.</p><ul class="pts"><li><b>숫자가 작을수록 밝아요!</b> (0등급, −1등급은 더 밝아요)</li><li>1등급 차 ≈ <b>약 2.5배</b> 밝기 차이</li><li>5등급 차 = <b>100배</b> (1등급 vs 6등급)</li></ul>`},
+  {m:'normal',say:'등급 차이만큼 밝기가 얼마나 달라지는지 살펴봐!',w:'ladder',h:`<h3>🪜 등급 사다리</h3>`},
+  {m:'normal',say:'비교하는 거리가 다르면 불공평해! 그래서 절대등급이 필요해.',w:'rank',h:`<h3>⚖️ 겉보기등급 vs 절대등급</h3><ul class="pts"><li><span class="hl">겉보기등급(상대등급)</span>: 지구에서 <b>눈으로 보이는</b> 밝기</li><li><span class="hl">절대등급</span>: 별을 <b>10pc(32.6광년)</b>에 놓았다고 가정했을 때의 밝기 = <b>실제 밝기</b></li></ul><p>버튼을 눌러 순서가 어떻게 바뀌는지 보세요!</p>`},
+  {m:'happy',say:'스텔라리움에서 별 도감 카드를 만들자!',mission:'m3'}]},
+ {n:'성운은하계',t:'성운 · 성단 · 은하',c:['#ff9fcf','#e0357a'],ic:'🌌',sum:'성운(가스·먼지), 산개/구상 성단(별 무리), 은하(별 수천억 개).',steps:[
+  {m:'happy',say:'우주에는 별 말고도 멋진 천체가 가득해!',w:'types',h:`<h3>🌠 우주의 4가지 천체</h3><p>그림을 보며 모양을 눈에 익혀 두세요.</p>`},
+  {m:'normal',say:'특징을 정리해 줄게. 이제 분류 게임에 도전!',h:`<h3>📚 특징 정리</h3><ul class="pts"><li><span class="hl">성운</span>: 가스와 먼지 구름<br>· <b>발광 성운</b> 붉게 스스로 빛남 (오리온 대성운)<br>· <b>반사 성운</b> 별빛을 반사해 푸르게<br>· <b>암흑 성운</b> 뒤 별빛을 가려 검게 (말머리 성운)</li><li><span class="hl">산개 성단</span>: <b>젊은 파란 별</b> 수십~수만 개가 <b>흩어져</b> 있음 (플레이아데스)</li><li><span class="hl">구상 성단</span>: <b>늙은 붉은 별</b> 수만~수십만 개가 <b>공 모양</b>으로 빽빽 (M13)</li><li><span class="hl">은하</span>: 별·가스·먼지 <b>수천억 개</b>의 집합. 우리은하는 막대 나선 은하이고, 태양계는 중심이 아닌 <b>나선팔</b>에 있어요.</li></ul>`},
+  {m:'normal',say:'사진만 보고 어떤 천체인지 맞혀봐!',w:'sort',h:`<h3>🎮 천체 분류 게임</h3>`},
+  {m:'happy',say:'진짜 천체를 하나씩 찾아가 보자!',mission:'m4'}]},
+ {n:'빅뱅행성',t:'빅뱅 우주론',c:['#ffb199','#ff3d6e'],ic:'💥',sum:'우주는 138억 년 전 빅뱅으로 시작해 지금도 팽창 중이에요.',steps:[
+  {m:'happy',say:'마지막 행성이야! 우주는 어떻게 시작됐을까?',h:`<h3>💥 빅뱅 우주론</h3><p>약 <b>138억 년 전</b>, 아주 작고 <b>뜨겁고 밀도가 매우 높은</b> 한 점에서 대폭발(빅뱅)이 일어나 우주가 시작되었다는 이론이에요.</p><p>그 뒤로 우주는 <b>팽창</b>하면서 식어 왔고, 별과 은하가 만들어졌어요.</p>`},
+  {m:'normal',say:'우주의 역사를 슬라이더로 여행해 봐!',w:'bang',h:`<h3>⏳ 우주의 역사</h3>`},
+  {m:'normal',say:'빅뱅을 믿을 수 있는 증거는 뭘까?',w:'hubble',h:`<h3>🎈 우주 팽창의 증거</h3><p>풍선에 점을 찍고 불면 점들이 서로 멀어지죠? 우주도 그래요. 허블은 <b>거의 모든 은하가 우리에게서 멀어지며, 멀리 있는 은하일수록 더 빠르게 멀어진다</b>는 것을 발견했어요. (빛이 붉게 치우치는 <b>적색편이</b>로 알아요)</p><p>우주 팽창을 거꾸로 돌리면 모든 것이 한 점에 모여요. 또 하나의 증거는 빅뱅 때 남은 빛인 <b>우주 배경 복사</b>예요.</p>`},
+  {m:'happy',say:'마지막 스텔라리움 미션! 과거의 빛을 만나러 가자.',mission:'m5'}]}
+];
+
+/* ---------- 퀴즈 ---------- */
+const QZ=[
+ [{q:'연주시차는 무엇일까요?',a:['6개월 간격으로 본 별의 위치 변화각의 ½','별이 하루 동안 하늘에서 도는 각도','별빛의 색이 변하는 정도','지구에서 달까지 가는 시간'],e:'지구가 공전하면서 6개월 간격으로 본 별의 위치 변화각의 <b>절반</b>이 연주시차예요.'},
+  {q:'연주시차가 0.5″인 별까지의 거리는?',a:['2 pc','0.5 pc','5 pc','50 pc'],e:'d(pc) = 1 ÷ p(″) = 1 ÷ 0.5 = <b>2pc</b>'},
+  {q:'별 A의 연주시차는 0.2″, 별 B는 0.05″예요. 더 멀리 있는 별은?',a:['B (20pc)','A (5pc)','둘 다 같아요','알 수 없어요'],e:'연주시차가 <b>작을수록 멀리</b> 있어요. A = 1÷0.2 = 5pc, B = 1÷0.05 = 20pc'},
+  {q:'1pc(파섹)은 약 몇 광년일까요?',a:['약 3.26광년','약 1광년','약 10광년','약 100광년'],e:'연주시차가 1″인 별까지 거리가 1pc이고 약 <b>3.26광년</b>이에요.'},
+  {q:'연주시차로 거리를 재기 어려운 별은?',a:['아주 멀리 있는 별','아주 밝은 별','아주 붉은 별','아주 작은 별'],e:'아주 멀리 있는 별은 연주시차가 너무 작아서 측정하기 어려워요.'}],
+ [{q:'별이 지금보다 3배 멀어지면 밝기는 어떻게 될까요?',a:['1/9로 어두워져요','1/3로 어두워져요','3배 밝아져요','9배 밝아져요'],e:'밝기는 거리의 제곱에 반비례! 1/3² = <b>1/9</b>'},
+  {q:'별까지 거리가 절반(1/2)이 되면 밝기는?',a:['4배 밝아져요','2배 밝아져요','1/2로 어두워져요','변하지 않아요'],e:'1 ÷ (1/2)² = <b>4배</b>'},
+  {q:'별의 밝기와 거리의 관계로 옳은 것은?',a:['밝기는 거리의 제곱에 반비례','밝기는 거리에 비례','밝기는 거리에 반비례','밝기는 거리와 관계없다'],e:'빛이 퍼지는 넓이가 거리²에 비례하므로 밝기는 <b>거리의 제곱에 반비례</b>해요.'},
+  {q:'실제 밝기가 같은 별 A, B가 있어요. B가 A보다 5배 멀리 있다면 A는 B보다 몇 배 밝게 보일까요?',a:['25배','5배','10배','1/25배'],e:'거리가 5배면 밝기는 1/5² = 1/25. 따라서 A가 B보다 <b>25배</b> 밝게 보여요.'}],
+ [{q:'다음 중 가장 밝게 보이는 별은?',a:['−1등급','0등급','2등급','5등급'],e:'등급 숫자가 <b>작을수록 밝아요</b>. 마이너스는 더 밝아요!'},
+  {q:'1등급 차이가 나면 별의 밝기는 약 몇 배 차이 날까요?',a:['약 2.5배','약 2배','약 10배','약 100배'],e:'1등급 차 ≈ <b>2.5배</b>, 5등급 차 = 100배예요.'},
+  {q:'1등급 별은 6등급 별보다 몇 배 밝을까요?',a:['100배','25배','6배','10배'],e:'5등급 차이 = 2.5⁵ ≈ <b>100배</b>'},
+  {q:'절대등급이란 무엇일까요?',a:['별을 10pc(32.6광년) 거리에 놓았다고 가정했을 때의 등급','지구에서 눈으로 보이는 밝기 등급','별의 크기를 나타내는 등급','별의 나이를 나타내는 등급'],e:'절대등급은 모든 별을 <b>같은 거리 10pc</b>에 놓았을 때의 등급으로, 별의 <b>실제 밝기</b>를 비교할 수 있어요.'},
+  {q:'시리우스(겉보기 −1.5, 절대 1.4)와 리겔(겉보기 0.1, 절대 −7.8) 중 실제로 더 밝은 별은?',a:['리겔','시리우스','둘이 같아요','알 수 없어요'],e:'실제 밝기는 <b>절대등급</b>으로 비교해요. 리겔(−7.8)이 훨씬 밝아요. 시리우스는 가까워서 더 밝게 보일 뿐이에요.'}],
+ [{q:'성운이란 무엇일까요?',a:['가스와 먼지(티끌)가 모여 있는 구름','별이 수천억 개 모인 집단','행성이 모인 무리','블랙홀이 터진 흔적'],e:'성운은 <b>가스와 먼지</b>로 이루어진 구름이에요.'},
+  {q:'오리온 대성운처럼 근처 별의 에너지를 받아 스스로 붉게 빛나는 성운은?',a:['발광 성운','반사 성운','암흑 성운','산개 성단'],e:'<b>발광 성운</b>은 스스로 빛나요(붉은색). 반사 성운은 별빛을 반사해 푸르게, 암흑 성운은 뒤쪽 빛을 가려 검게 보여요.'},
+  {q:'뒤쪽의 별빛을 가려서 검게 보이는 성운은?',a:['암흑 성운','발광 성운','반사 성운','구상 성단'],e:'말머리 성운 같은 <b>암흑 성운</b>이에요.'},
+  {q:'플레이아데스처럼 젊고 푸른 별 수십~수만 개가 느슨하게 모인 것은?',a:['산개 성단','구상 성단','발광 성운','나선 은하'],e:'<b>산개 성단</b>은 젊은 별들이 불규칙하게 흩어져 모여 있어요.'},
+  {q:'늙고 붉은 별 수십만 개가 공 모양으로 빽빽하게 모인 것은?',a:['구상 성단','산개 성단','암흑 성운','불규칙 은하'],e:'<b>구상 성단</b>은 공 모양으로 빽빽해요.'},
+  {q:'우리은하에 대한 설명으로 옳은 것은?',a:['태양계는 중심이 아닌 나선팔 쪽에 있어요','태양계는 우리은하의 한가운데에 있어요','우리은하는 별이 100개쯤 모인 작은 무리예요','우리은하는 은하가 아니라 성단이에요'],e:'우리은하는 별이 <b>수천억 개</b> 모인 막대 나선 은하이고, 태양계는 중심에서 약 2.6만 광년 떨어진 나선팔에 있어요.'}],
+ [{q:'빅뱅 우주론은 우주의 시작을 어떻게 설명할까요?',a:['아주 작고 뜨겁고 밀도 높은 한 점에서 대폭발로 팽창하기 시작','지금과 똑같은 크기로 항상 있었다','큰 별 하나가 터져서 시작','차갑고 텅 빈 공간에서 천천히 시작'],e:'우주는 <b>고온·고밀도의 한 점</b>에서 시작해 팽창해 왔어요.'},
+  {q:'우주의 나이는 약 얼마일까요?',a:['약 138억 년','약 46억 년','약 1억 년','약 1조 년'],e:'우주의 나이는 약 <b>138억 년</b>이에요. 46억 년은 태양계의 나이!'},
+  {q:'허블이 발견한 우주 팽창의 증거는?',a:['멀리 있는 은하일수록 더 빠르게 멀어진다','가까운 은하일수록 더 빠르게 멀어진다','모든 은하가 우리를 향해 다가온다','은하는 모두 같은 속도로 움직인다'],e:'<b>멀리 있는 은하일수록 더 빠르게</b> 멀어져요. 우주가 팽창한다는 증거예요.'},
+  {q:'우주 배경 복사는 무엇일까요?',a:['빅뱅 후 약 38만 년에 빛이 직진하게 되면서 남은 빛','태양에서 나오는 빛','블랙홀이 내는 빛','별이 폭발할 때 나온 빛'],e:'우주가 식어 원자가 만들어지면서 빛이 직진할 수 있게 되었고, 그때의 빛이 <b>우주 배경 복사</b>로 남아 있어요.'},
+  {q:'빅뱅 초기 우주를 이루던 원소 중 가장 많은 것(약 75%)은?',a:['수소','산소','탄소','철'],e:'초기 우주는 <b>수소 약 75%, 헬륨 약 25%</b>(질량비)였어요.'}]
+];
+const ALL=QZ.flat();
+
+/* ---------- 화면: 홈 ---------- */
+function home(){
+  const total=S.stars.reduce((a,b)=>a+b,0),all=S.stars.every(x=>x>0);
+  app.innerHTML=`<div class="top"><div class="logo jua">🚀 별빛 탐험대</div><div class="pill">★ ${total}/15 · 🪙 ${S.coins}</div></div>
+  <div class="lrow">${lumi(all?'happy':'normal',84)}<div class="bubble">${all?`모든 행성을 탐험했어! <b>${esc(S.profile.name)}</b>, 이제 <b>졸업 시험</b>에 도전해 볼래?`:`안녕 <b>${esc(S.profile.name)}</b>! 나는 <b>${cur().n}</b>야 ✨ 함께 5개의 행성을 탐험하며 별과 우주의 비밀을 풀어보자!`}</div></div>
+  <div class="card" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px"><span>🧑‍🚀 <b>${esc(S.profile.id)} ${esc(S.profile.name)}</b></span><button class="back" id="ed">내 정보 수정</button></div>
+  <button class="btn mint" id="dx" style="margin:0 0 12px">📖 내 별 도감 보기 (${S.cards.length}장)</button>
+  <div class="map">${ST.map((s,i)=>{const lock=i+1>S.unlocked,st=S.stars[i];return `<button class="node ${lock?'lock':''}" data-i="${i}" ${lock?'disabled':''}><div class="planet" style="--a:${s.c[0]};--b:${s.c[1]}">${lock?'🔒':s.ic}</div><div class="ninfo"><small>STAGE ${i+1}</small><b>${s.n}</b><span>${s.t}</span><div class="stars">${'★'.repeat(st)+'☆'.repeat(3-st)}</div></div></button>`;}).join('')}
+  <button class="node ${all?'':'lock'}" id="fin" ${all?'':'disabled'}><div class="planet" style="--a:#fff3b0;--b:#ffb82e">${all?'🏅':'🔒'}</div><div class="ninfo"><small>FINAL</small><b>우주 졸업 시험</b><span>${S.final?'🎓 졸업 완료! 다시 도전하기':'5개 행성을 모두 클리어하면 열려요'}</span></div></button></div>
+  <div class="card"><h3>📤 선생님께 제출</h3><p class="small" id="syn"></p><button class="btn ghost" id="sc" style="margin-top:6px">📋 제출 코드 만들기</button><div id="sx"></div></div>
+  <div class="card"><h3>🎒 내 스티커 보관함 (${S.stk.length}/${STK.length})</h3><p class="small">문제를 맞히면 코인과 스티커를 받아요!</p><div class="stk">${STK.map(x=>`<span class="${S.stk.includes(x)?'':'no'}">${x}</span>`).join('')}</div></div>
+  <button class="reset" id="rs">진행 상황 초기화</button><button class="reset" id="rl">역할 선택으로 돌아가기</button>`;
+  app.querySelectorAll('.node[data-i]').forEach(b=>b.onclick=()=>stage(+b.dataset.i,0));
+  document.getElementById('ed').onclick=()=>setup(false);document.getElementById('dx').onclick=dex;document.getElementById('rl').onclick=entry;document.getElementById('sc').onclick=()=>showCode(document.getElementById('sx'));updStat();const f=document.getElementById('fin');if(f&&all)f.onclick=()=>quiz('final');
+  document.getElementById('rs').onclick=()=>{if(document.getElementById('rs').dataset.s){S={unlocked:1,stars:[0,0,0,0,0],final:false,profile:S.profile,char:S.char,coins:0,stk:[],cards:S.cards,qa:{},att:[0,0,0,0,0]};save();home();}else{const r=document.getElementById('rs');r.dataset.s=1;r.textContent='정말 초기화할까요? 한 번 더 누르면 지워져요';}};
+  scrollTo(0,0);
+}
+
+/* ---------- 화면: 학습 ---------- */
+function stage(i,s=0){
+  const st=ST[i],stp=st.steps[s],last=s===st.steps.length-1;
+  app.innerHTML=`<div class="top"><button class="back" id="bk">← 지도</button><div class="jua" style="font-size:18px">${st.ic} ${st.n}</div><div class="pill" style="font-size:12px">${s+1}/${st.steps.length}</div></div>
+  <div class="dots">${st.steps.map((_,k)=>`<i class="${k<=s?'on':''}"></i>`).join('')}</div>
+  <div class="lrow">${lumi(stp.m,70)}<div class="bubble">${stp.say}</div></div>
+  <div class="card">${stp.mission?missionHTML(stp.mission):stp.h}<div id="wg"></div></div>${stp.mission?'<div class="card" id="dexwrap"></div>':''}
+  <div class="navrow">${s>0?'<button class="btn ghost" id="pv">◀ 이전</button>':''}<button class="btn" id="nx">${last?'🚀 퀴즈 도전!':'다음 ▶'}</button></div>`;
+  document.getElementById('bk').onclick=home;
+  if(s>0)document.getElementById('pv').onclick=()=>stage(i,s-1);
+  document.getElementById('nx').onclick=()=>last?quiz(i):stage(i,s+1);
+  if(stp.w)WIDGETS[stp.w](document.getElementById('wg'));if(stp.mission)dexForm(document.getElementById('dexwrap'),i);
+  scrollTo(0,0);
+}
+
+/* ---------- 별 도감 카드 ---------- */
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DEX_NAMES=['시리우스','북극성','베가','리겔','베텔게우스','프록시마','오리온 대성운','플레이아데스','M13','안드로메다 은하'];
+const TIC={별:'⭐',성운:'🌫️',성단:'✨',은하:'🌀'};
+function dcalc(m,ly){const o={};if(Number.isFinite(ly)&&ly>0){o.pc=ly/3.26;o.p=1/o.pc;if(Number.isFinite(m))o.M=m-5*Math.log10(o.pc/10);}return o;}
+const fnum=x=>Math.abs(x)<0.1?x.toPrecision(2):(Math.round(x*100)/100).toString();
+function dexForm(el,stg,after){
+  el.innerHTML=`<h3>📇 별 도감 카드 기록</h3><p class="small">스텔라리움에서 확인한 값을 적어 도감에 저장해요. 저장하면 🪙 +15!</p>
+  <label class="fl">이름<input id="dn" maxlength="20" list="dnl" placeholder="예) 시리우스"><datalist id="dnl">${DEX_NAMES.map(n=>`<option value="${n}">`).join('')}</datalist></label>
+  <label class="fl">종류<select id="dt"><option>별</option><option>성운</option><option>성단</option><option>은하</option></select></label>
+  <div class="two"><label class="fl">겉보기등급<input id="dm" type="number" step="0.01" inputmode="decimal" placeholder="예) -1.46"></label><label class="fl">거리(광년)<input id="dly" type="number" step="any" min="0" inputmode="decimal" placeholder="예) 8.6"></label></div>
+  <div class="read" id="dc">거리를 입력하면 pc, 연주시차, 절대등급을 자동으로 계산해 줘요.</div>
+  <label class="fl">한 줄 메모<input id="dno" maxlength="60" placeholder="알게 된 점을 적어 보세요"></label>
+  <div class="err" id="de"></div><button class="btn mint" id="ds">도감에 저장하기 📇</button>`;
+  const q=i=>el.querySelector(i),read=()=>{const m=parseFloat(q('#dm').value),ly=parseFloat(q('#dly').value),c=dcalc(m,ly),isS=q('#dt').value==='별';
+    q('#dc').innerHTML=c.pc?`거리 ≈ <b>${fnum(c.pc)} pc</b> · 연주시차 ≈ <b>${fnum(c.p)}″</b>${c.M!==undefined&&isS?` · 절대등급 ≈ <b>${fnum(c.M)}등급</b>`:''}`:'거리를 입력하면 pc, 연주시차, 절대등급을 자동으로 계산해 줘요.';};
+  ['#dm','#dly','#dt'].forEach(i=>q(i).oninput=read);
+  q('#ds').onclick=()=>{
+    const n=q('#dn').value.trim();if(!n){q('#de').textContent='천체 이름을 입력해 주세요.';return;}
+    const m=parseFloat(q('#dm').value),ly=parseFloat(q('#dly').value);
+    S.cards.unshift({n,t:q('#dt').value,m:Number.isFinite(m)?m:null,ly:Number.isFinite(ly)&&ly>0?ly:null,note:q('#dno').value.trim(),s:stg});
+    S.coins+=15;save();
+    el.innerHTML=`<div class="reward">✅ 도감에 저장했어요! 🪙 +15</div><button class="btn ghost" id="d1">➕ 카드 하나 더 쓰기</button><button class="btn mint" id="d2">📖 내 도감 보기</button>`;
+    q('#d1').onclick=()=>dexForm(el,stg,after);q('#d2').onclick=dex;if(after)after();
+  };
+}
+function dexText(){
+  const L=S.cards.slice().reverse().map((c,i)=>{const k=dcalc(c.m,c.ly);return `${i+1}. ${c.n} (${c.t})`+(c.m!==null?` / 겉보기 ${c.m}등급`:'')+(c.ly?` / 거리 ${c.ly}광년(${fnum(k.pc)}pc)`:'')+(k.p&&c.t==='별'?` / 연주시차 ${fnum(k.p)}″`:'')+(k.M!==undefined&&c.t==='별'?` / 절대등급 ${fnum(k.M)}`:'')+(c.note?` / 메모: ${c.note}`:'');});
+  return `[별 도감] ${S.profile.id} ${S.profile.name} (${S.cards.length}장)\n`+L.join('\n');
+}
+function dex(){
+  app.innerHTML=`<div class="top"><button class="back" id="bk">← 지도</button><div class="jua" style="font-size:18px">📖 내 별 도감</div><div class="pill">${S.cards.length}장</div></div>
+  <div class="card"><p><b>${esc(S.profile.id)} ${esc(S.profile.name)}</b> 탐험대원의 도감</p><button class="btn mint" id="nw">➕ 새 카드 쓰기</button><div id="nf" style="margin-top:10px"></div></div>
+  ${S.cards.length?S.cards.map((c,i)=>{const k=dcalc(c.m,c.ly),isS=c.t==='별';return `<div class="dexc"><div class="dh"><span>${TIC[c.t]||'⭐'} <b>${esc(c.n)}</b></span><button class="del" data-i="${i}">🗑 삭제</button></div><div class="dg"><span>${esc(c.t)}</span>${c.m!==null?`<span>겉보기 ${c.m}등급</span>`:''}${c.ly?`<span>${c.ly}광년 (${fnum(k.pc)}pc)</span>`:''}${k.p&&isS?`<span>연주시차 ${fnum(k.p)}″</span>`:''}${k.M!==undefined&&isS?`<span>절대등급 ${fnum(k.M)}</span>`:''}</div>${c.note?`<div class="nt">📝 ${esc(c.note)}</div>`:''}</div>`;}).join(''):'<div class="card center"><p>아직 카드가 없어요. 스텔라리움에서 찾은 천체를 기록해 보세요!</p></div>'}
+  ${S.cards.length?'<button class="btn ghost" id="cp">📋 도감 내용 복사하기 (제출용)</button><div id="cx"></div>':''}`;
+  document.getElementById('bk').onclick=home;
+  document.getElementById('nw').onclick=()=>dexForm(document.getElementById('nf'),-1,()=>{});
+  app.querySelectorAll('.del').forEach(b=>b.onclick=()=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='정말 삭제?';return;}S.cards.splice(+b.dataset.i,1);save();dex();});
+  const cp=document.getElementById('cp');if(cp)cp.onclick=()=>{
+    const t=dexText();document.getElementById('cx').innerHTML=`<textarea class="ta" readonly></textarea><p class="small" id="cm">아래 글을 길게 눌러 복사하거나, 선생님이 알려준 곳에 붙여넣어요.</p>`;
+    const ta=document.querySelector('#cx textarea');ta.value=t;ta.focus();ta.select();
+    try{navigator.clipboard.writeText(t).then(()=>{document.getElementById('cm').textContent='✅ 복사되었어요! 붙여넣기 하세요.';},()=>{});}catch(e){}
+  };
+  scrollTo(0,0);
+}
+
+/* ---------- 클라우드 동기화 / 교사·학생 ---------- */
+let DB=null,UID=null,SYNC='off',TU=null,TREM=[],TSEL=null,TQ='';
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function initCloud(){
+  try{
+    if(typeof claude==='undefined')return;
+    const u=await claude.use('user'),db=await claude.use('db');
+    if(u&&db){const id=await u.id();if(id){DB=db;UID=id;SYNC='ok';}}
+  }catch(e){}
+  if(DB&&S.profile)sync();
+  updStat();
+}
+const cloudReady=initCloud();
+const report=()=>({v:1,id:S.profile.id,name:S.profile.name,ch:S.char,stars:S.stars,coins:S.coins,fin:S.final,stk:S.stk,cards:S.cards.slice(0,60),qa:S.qa,att:S.att,t:Date.now()});
+let pushing=false,dirty=false,stimer=null;
+function sync(){if(!DB||!S.profile)return;dirty=true;clearTimeout(stimer);stimer=setTimeout(doPush,1500);}
+async function doPush(){
+  if(pushing||!dirty)return;pushing=true;dirty=false;
+  try{await DB.doc('students/'+UID).set(report());SYNC='ok';}catch(e){SYNC='err';}
+  pushing=false;updStat();if(dirty)sync();
+}
+function updStat(){
+  const e=document.getElementById('syn');if(!e)return;
+  e.innerHTML=SYNC==='ok'?'✅ 학습 기록이 선생님 화면에 <b>자동 전송</b>되고 있어요.':SYNC==='err'?'⚠️ 자동 전송에 문제가 있어요. 아래 <b>제출 코드</b>를 선생님께 보내 주세요.':'ℹ️ 지금은 자동 전송을 쓸 수 없어요. 아래 <b>제출 코드</b>를 선생님께 보내 주세요.';
+}
+const enc=r=>'STAR1:'+btoa(unescape(encodeURIComponent(JSON.stringify(r))));
+function showCode(el){
+  const t=enc(report());
+  el.innerHTML=`<textarea class="ta" readonly style="height:110px"></textarea><p class="small" id="cm2">길게 눌러 복사해서 선생님께 메신저로 보내 주세요.</p>`;
+  const ta=el.querySelector('textarea');ta.value=t;ta.focus();ta.select();
+  try{navigator.clipboard.writeText(t).then(()=>{el.querySelector('#cm2').textContent='✅ 복사되었어요! 선생님께 붙여넣어 보내세요.';},()=>{});}catch(e){}
+}
+function adopt(r){
+  r=clean(r);if(!r)return;
+  S.profile={id:r.id,name:r.name};S.char=r.ch;S.stars=r.stars;S.coins=r.coins;S.final=r.fin;S.stk=r.stk;S.cards=r.cards;S.qa=r.qa;S.att=r.att;
+  S.unlocked=Math.min(6,Math.max(1,r.stars.map(x=>x>0).lastIndexOf(true)+2));
+}
+function clean(r){
+  if(!r||typeof r!=='object')return null;
+  const id=String(r.id||'').slice(0,8),name=String(r.name||'').slice(0,8);if(!id)return null;
+  const n=x=>Number.isFinite(+x)?+x:0,I=x=>Math.max(0,n(x)|0);
+  const stars=[0,1,2,3,4].map(i=>Math.min(3,I(r.stars&&r.stars[i]))),att=[0,1,2,3,4].map(i=>I(r.att&&r.att[i]));
+  const qa={};if(r.qa&&typeof r.qa==='object')for(const k of Object.keys(r.qa)){const i=+k,v=r.qa[k];if(Number.isInteger(i)&&i>=0&&i<ALL.length&&Array.isArray(v))qa[i]=[I(v[0]),I(v[1])];}
+  const cards=(Array.isArray(r.cards)?r.cards:[]).filter(c=>c&&typeof c==='object').slice(0,60).map(c=>({n:String(c.n||'').slice(0,20),t:String(c.t||'별').slice(0,4),m:(c.m===null||c.m===undefined||!Number.isFinite(+c.m))?null:+c.m,ly:(Number.isFinite(+c.ly)&&+c.ly>0)?+c.ly:null,note:String(c.note||'').slice(0,60),s:0}));
+  return {id,name,ch:I(r.ch)%4,stars,att,qa,cards,coins:I(r.coins),fin:!!r.fin,stk:(Array.isArray(r.stk)?r.stk:[]).slice(0,16).map(x=>String(x).slice(0,4)),t:n(r.t)};
+}
+async function isTeacher(){
+  try{if(typeof claude==='undefined')return false;const u=await claude.use('user');if(!u)return false;return !!((await u.canEdit())||(await u.isOwner()));}catch(e){return false;}
+}
+const ago=t=>{if(!t)return '기록 없음';const m=(Date.now()-t)/60000;return m<1?'방금':m<60?Math.floor(m)+'분 전':m<1440?Math.floor(m/60)+'시간 전':Math.floor(m/1440)+'일 전';};
+function qStage(i){let a=i;for(let s=0;s<QZ.length;s++){if(a<QZ[s].length)return s;a-=QZ[s].length;}return 4;}
+const IMPK='starQuestTeacherV1';
+const getImp=()=>{try{return JSON.parse(localStorage.getItem(IMPK))||{};}catch(e){return {};}};
+const setImp=o=>{try{localStorage.setItem(IMPK,JSON.stringify(o));}catch(e){}};
+
+function stopT(){if(TU){try{TU();}catch(e){}TU=null;}}
+function entry(){
+  stopT();
+  app.innerHTML=`<div class="center"><div class="logo jua" style="font-size:32px;margin-top:10px">🚀 별빛 탐험대</div><p class="sub">중3 과학 · 별과 우주</p><div class="lrow" style="justify-content:center">${astro('happy',100)}${starC('happy',64)}</div></div>
+  <button class="btn" id="e1" style="padding:20px;font-size:18px">🧑‍🎓 학생으로 시작하기</button>
+  <button class="btn ghost" id="e2" style="padding:20px;font-size:18px">👩‍🏫 교사 모드</button>
+  <div class="err" id="er"></div><p class="small center">교사 모드는 이 앱의 편집 권한이 있는 선생님 계정에서만 열려요.</p>`;
+  const er=document.getElementById('er');
+  document.getElementById('e1').onclick=async()=>{
+    er.textContent='불러오는 중…';await Promise.race([cloudReady,sleep(4000)]);
+    if(!S.profile&&DB){try{const d=await DB.doc('students/'+UID).get();if(d.exists){adopt(d.data());save();return home();}}catch(e){}}
+    S.profile?home():setup(true);
+  };
+  document.getElementById('e2').onclick=async()=>{
+    er.textContent='권한 확인 중…';
+    if(!(await isTeacher())){er.textContent='교사 권한이 없어요. 앱 소유자 또는 편집 권한이 있는 계정으로 열어 주세요.';return;}
+    await Promise.race([cloudReady,sleep(4000)]);teacher();
+  };
+  scrollTo(0,0);
+}
+
+function allStudents(){
+  const m={};
+  for(const d of TREM){const r=clean(d);if(r){r.src='☁️';r._doc=d._doc;m[r.id]=r;}}
+  const imp=getImp();
+  for(const k of Object.keys(imp)){const r=clean(imp[k]);if(r&&(!m[r.id]||r.t>m[r.id].t)){r.src='📥';m[r.id]=r;}}
+  return Object.values(m).sort((a,b)=>a.id.localeCompare(b.id,'ko',{numeric:true}));
+}
+const sum3=r=>r.stars.reduce((a,b)=>a+b,0);
+function teacher(){
+  stopT();TSEL=null;TQ='';
+  app.innerHTML=`<div class="top"><button class="back" id="bk">← 역할 선택</button><div class="jua" style="font-size:18px">👩‍🏫 교사 모드</div><div class="pill" id="ts" style="font-size:11px">연결 중…</div></div>
+  <div id="tsum"></div>
+  <div class="card"><h3>👩‍🎓 학생 현황</h3><input class="sq" id="tq" placeholder="🔍 학번·이름 검색"><div id="tl"></div></div>
+  <div class="card"><h3>❓ 많이 틀린 문제 TOP 5</h3><div id="tw"></div></div>
+  <div class="card"><h3>📥 학생 제출 코드 가져오기</h3><p class="small">자동 전송이 안 되는 학생은 '제출 코드'를 메신저로 보내요. 여러 개를 한꺼번에 붙여넣어도 돼요.</p><textarea class="ta" id="imp" style="height:80px" placeholder="STAR1:..."></textarea><button class="btn ghost" id="imb">가져오기</button><div id="imm" class="small"></div></div>
+  <button class="btn ghost" id="tcp">📋 전체 결과 복사 (엑셀·시트에 붙여넣기)</button><div id="tx"></div>`;
+  document.getElementById('bk').onclick=entry;
+  document.getElementById('tq').oninput=e=>{TQ=e.target.value.trim();tRender();};
+  document.getElementById('tl').onclick=e=>{
+    const del=e.target.closest('.tdel');
+    if(del){if(!del.dataset.s){del.dataset.s=1;del.textContent='정말 삭제? 한 번 더';return;}tDelete(del.dataset.k);return;}
+    if(e.target.closest('.dd'))return;
+    const row=e.target.closest('.srow');if(row){TSEL=TSEL===row.dataset.k?null:row.dataset.k;tRender();}
+  };
+  document.getElementById('imb').onclick=()=>{
+    const t=document.getElementById('imp').value,re=/STAR1:([A-Za-z0-9+\/=]+)/g;let m,ok=0,bad=0;const imp=getImp();
+    while((m=re.exec(t))){try{const r=clean(JSON.parse(decodeURIComponent(escape(atob(m[1])))));if(r){imp[r.id]=r;ok++;}else bad++;}catch(e){bad++;}}
+    setImp(imp);document.getElementById('imm').textContent=ok||bad?`✅ ${ok}명 가져왔어요${bad?` · 읽지 못한 코드 ${bad}개`:''}`:'붙여넣은 코드가 없어요.';
+    if(ok)document.getElementById('imp').value='';tRender();
+  };
+  document.getElementById('tcp').onclick=()=>{
+    const L=allStudents(),H=['학번','이름','★합계(15)','1단원★','2단원★','3단원★','4단원★','5단원★','코인','도감 카드','졸업','최근 활동'];
+    const t=[H.join('\t')].concat(L.map(r=>[r.id,r.name,sum3(r),...r.stars,r.coins,r.cards.length,r.fin?'O':'',ago(r.t)].join('\t'))).join('\n');
+    const x=document.getElementById('tx');x.innerHTML='<textarea class="ta" readonly></textarea><p class="small" id="tcm">길게 눌러 복사하거나 붙여넣어 사용하세요.</p>';
+    const ta=x.querySelector('textarea');ta.value=t;ta.focus();ta.select();
+    try{navigator.clipboard.writeText(t).then(()=>{document.getElementById('tcm').textContent='✅ 복사되었어요!';},()=>{});}catch(e){}
+  };
+  const st=t=>{const e=document.getElementById('ts');if(e)e.textContent=t;};
+  if(!DB){st('☁️ 연결 안 됨');}
+  else{
+    st('연결 중…');const tm=setTimeout(()=>st('연결이 느려요…'),10000);
+    TU=DB.collection('students').onSnapshot(sn=>{clearTimeout(tm);TREM=sn.docs.map(d=>Object.assign({},d.data(),{_doc:d.id}));st('🟢 실시간 연결');tRender();},e=>{clearTimeout(tm);st('⚠️ 불러오기 실패');});
+  }
+  tRender();scrollTo(0,0);
+}
+async function tDelete(k){
+  const r=allStudents().find(x=>x.id===k);if(!r)return;
+  const imp=getImp();delete imp[k];setImp(imp);
+  if(r._doc&&DB){try{await DB.doc('students/'+r._doc).delete();TREM=TREM.filter(d=>d._doc!==r._doc);}catch(e){}}
+  TSEL=null;tRender();
+}
+function tRender(){
+  const tl=document.getElementById('tl');if(!tl)return;
+  const L=allStudents(),n=L.length;
+  const avg=n?(L.reduce((a,r)=>a+sum3(r),0)/n).toFixed(1):'0',grad=L.filter(r=>r.fin).length,act=L.filter(r=>Date.now()-r.t<600000).length,cards=n?(L.reduce((a,r)=>a+r.cards.length,0)/n).toFixed(1):'0';
+  document.getElementById('tsum').innerHTML=`<div class="sg"><div><b>${n}</b>학생 수</div><div><b>${avg}</b>평균 ★ (15점 만점)</div><div><b>${grad}</b>졸업 완료</div><div><b>${act}</b>10분 내 활동 중</div></div><p class="small center">학생당 평균 별 도감 카드 ${cards}장</p>`;
+  const q=TQ.toLowerCase(),F=L.filter(r=>!q||r.id.toLowerCase().includes(q)||r.name.toLowerCase().includes(q));
+  tl.innerHTML=F.length?F.map(r=>{
+    const open=TSEL===r.id;
+    let det='';
+    if(open){
+      const wr=Object.keys(r.qa).map(k=>[+k,r.qa[k]]).filter(x=>x[1][0]>0).sort((a,b)=>b[1][0]-a[1][0]).slice(0,3);
+      det=`<div class="dd" onclick="event.stopPropagation()"><table class="dtab"><tr><th>단원</th><th>별</th><th>도전</th></tr>${ST.map((s,i)=>`<tr><td>${s.ic} ${s.n}</td><td>${'★'.repeat(r.stars[i])+'☆'.repeat(3-r.stars[i])}</td><td>${r.att[i]}회</td></tr>`).join('')}</table>
+      <p><b>많이 틀린 문제</b></p>${wr.length?wr.map(([i,v])=>`<p class="small">· [${ST[qStage(i)].n}] ${ALL[i].q} <b>(오답 ${v[0]}회)</b></p>`).join(''):'<p class="small">아직 틀린 문제가 없어요 👍</p>'}
+      <p style="margin-top:8px"><b>📖 별 도감 카드 (${r.cards.length}장)</b></p>${r.cards.length?r.cards.map(c=>{const k=dcalc(c.m,c.ly);return `<div class="dexc" style="margin:6px 0;padding:8px 10px"><b>${TIC[c.t]||'⭐'} ${esc(c.n)}</b> <span class="small">${esc(c.t)}${c.m!==null?` · 겉보기 ${c.m}등급`:''}${c.ly?` · ${c.ly}광년`:''}${k.M!==undefined&&c.t==='별'?` · 절대 ${fnum(k.M)}`:''}</span>${c.note?`<div class="nt">📝 ${esc(c.note)}</div>`:''}</div>`;}).join(''):'<p class="small">아직 없어요.</p>'}
+      <button class="del tdel" data-k="${esc(r.id)}" style="margin-top:8px">🗑 이 학생 기록 삭제</button></div>`;
+    }
+    return `<div class="srow ${open?'op':''}" data-k="${esc(r.id)}"><div class="sh"><span><b>${esc(r.id)}</b> ${esc(r.name)} ${r.fin?'🎓':''}</span><span class="hl">★ ${sum3(r)}/15</span></div><div class="chips">${r.stars.map((x,i)=>`<i class="sc s${x}">${i+1}</i>`).join('')}</div><div class="small">🪙 ${r.coins} · 📖 ${r.cards.length}장 · ${ago(r.t)} ${r.src}</div>${det}</div>`;
+  }).join(''):'<p class="small center">아직 학생 기록이 없어요. 학생이 활동하면 여기에 나타나요.</p>';
+  const agg={};for(const r of L)for(const k of Object.keys(r.qa)){const a=agg[k]||(agg[k]=[0,0]);a[0]+=r.qa[k][0];a[1]+=r.qa[k][1];}
+  const top=Object.keys(agg).map(k=>[+k,agg[k]]).filter(x=>x[1][0]>0).sort((a,b)=>b[1][0]-a[1][0]).slice(0,5);
+  document.getElementById('tw').innerHTML=top.length?top.map(([i,v],k)=>`<p>${k+1}. <span class="small">[${ST[qStage(i)].n}]</span> ${ALL[i].q}<br><span class="hl">오답 ${v[0]}회 · 오답률 ${Math.round(v[0]/(v[0]+v[1])*100)}%</span></p>`).join(''):'<p class="small">아직 오답 데이터가 없어요.</p>';
+}
+
+/* ---------- 화면: 정보 입력 ---------- */
+function setup(first){
+  let sel=S.char|0;const p=S.profile||{id:'',name:''};
+  app.innerHTML=`<div class="center"><div class="logo jua" style="font-size:30px">🚀 별빛 탐험대</div><p class="sub">우주 탐험 전에 정보를 입력하고 캐릭터를 골라요!</p></div>
+  <div class="card"><h3>👤 내 정보</h3><label class="fl">학번<input id="pid" inputmode="numeric" maxlength="8" placeholder="예) 30112" value="${p.id}"></label><label class="fl">이름<input id="pnm" maxlength="8" placeholder="이름을 입력하세요" value="${p.name}"></label></div>
+  <div class="card"><h3>🧑‍🚀 캐릭터 선택</h3><div class="chars">${CH.map((c,i)=>`<button class="chr ${i===sel?'on':''}" data-c="${i}">${charSVG(i,'happy',66)}<b>${c.n}</b><span>${c.d}</span></button>`).join('')}</div></div>
+  <div class="err" id="err"></div><button class="btn" id="go">탐험 시작! 🚀</button><button class="btn ghost" id="cn">${first?'← 역할 선택':'취소'}</button>`;
+  app.querySelectorAll('.chr').forEach(b=>b.onclick=()=>{sel=+b.dataset.c;app.querySelectorAll('.chr').forEach(x=>x.classList.toggle('on',x===b));});
+  document.getElementById('go').onclick=()=>{
+    const id=document.getElementById('pid').value.trim(),nm=document.getElementById('pnm').value.trim(),er=document.getElementById('err');
+    if(!/^\d{3,8}$/.test(id)){er.textContent='학번은 숫자 3~8자리로 입력해 주세요.';return;}
+    if(!nm){er.textContent='이름을 입력해 주세요.';return;}
+    S.profile={id,name:nm};S.char=sel;save();home();
+  };
+  document.getElementById('cn').onclick=first?entry:home;
+  scrollTo(0,0);
+}
+
+/* ---------- 화면: 퀴즈 ---------- */
+let Q=null;
+function quiz(src){if(typeof src==='number'){S.att[src]=(S.att[src]||0)+1;save();}Q={src,list:src==='final'?shuf(ALL).slice(0,6):QZ[src].slice(),idx:0,wrong:0,tries:0,ans:false};qrender();}
+function qrender(){
+  const q=Q.list[Q.idx],opts=shuf(q.a.map((t,k)=>({t,ok:k===0}))),title=Q.src==='final'?'🏅 졸업 시험':`${ST[Q.src].ic} ${ST[Q.src].n} 퀴즈`;
+  Q.tries=0;Q.ans=false;
+  app.innerHTML=`<div class="top"><button class="back" id="bk">✕</button><div class="jua" style="font-size:18px">${title}</div><div class="pill" id="cn">🪙 ${S.coins}</div></div>
+  <div class="prog"><i style="width:${Q.idx/Q.list.length*100}%"></i></div>
+  <div class="lrow" id="lr">${lumi('normal',70)}<div class="bubble">문제 ${Q.idx+1} / ${Q.list.length} · <b>정답을 맞혀야</b> 다음으로 갈 수 있어! 맞히면 🪙 보상!</div></div>
+  <div class="card"><h3 class="qq">${q.q}</h3><div class="opts">${opts.map(o=>`<button class="opt" data-ok="${o.ok?1:0}">${o.t}</button>`).join('')}</div><div id="fb"></div></div>`;
+  document.getElementById('bk').onclick=home;
+  const say=(m,t)=>{document.getElementById('lr').innerHTML=lumi(m,70)+`<div class="bubble">${t}</div>`;};
+  app.querySelectorAll('.opts .opt').forEach(b=>b.onclick=()=>{
+    if(Q.ans||b.disabled)return;
+    if(b.dataset.ok!=='1'){
+      Q.tries++;Q.wrong++;b.classList.add('bad');b.disabled=true;{const qi=ALL.indexOf(q);(S.qa[qi]=S.qa[qi]||[0,0])[0]++;save();}
+      say('sad',Q.tries>=2?'괜찮아, 힌트를 읽고 다시 도전해 봐! 💪':'앗, 오답! 다른 보기를 골라서 다시 도전해 봐 💪');
+      if(Q.tries>=2)document.getElementById('fb').innerHTML=`<div class="ex">💡 힌트: ${q.e}</div>`;
+      return;
+    }
+    Q.ans=true;b.classList.add('good');{const qi=ALL.indexOf(q);(S.qa[qi]=S.qa[qi]||[0,0])[1]++;}app.querySelectorAll('.opts .opt').forEach(x=>x.disabled=true);
+    const coin=Q.tries===0?10:5,nw=STK.filter(x=>!S.stk.includes(x)),stk=Q.tries===0?(nw.length?nw[Math.random()*nw.length|0]:null):null;
+    S.coins+=coin;if(stk)S.stk.push(stk);save();document.getElementById('cn').textContent='🪙 '+S.coins;
+    say('happy',Q.tries===0?'한 번에 정답! 대단해! 🎉':'끝까지 해냈구나! 멋져! 👏');
+    const last=Q.idx===Q.list.length-1;
+    document.getElementById('fb').innerHTML=`<div class="reward">🎁 보상! 🪙 +${coin}${stk?` · 새 스티커 ${stk}`:''}${Q.tries===0?'':'<br><small>(한 번에 맞히면 🪙 10 + 스티커!)</small>'}</div><div class="ex">${q.e}</div><button class="btn" id="qn">${last?'결과 보기':'다음 문제 ▶'}</button>`;
+    document.getElementById('qn').onclick=()=>{Q.idx++;Q.idx>=Q.list.length?pass():qrender();};
+  });
+  scrollTo(0,0);
+}
+function pass(){
+  const s=Q.src,who=`${S.profile.id} ${S.profile.name}`;
+  if(s==='final'){const first=!S.final;if(first)S.coins+=100;S.final=true;save();
+    app.innerHTML=`<div class="center"><div class="badge">🏅</div><h2 class="jua" style="font-size:30px;margin:14px 0 4px;color:var(--gold)">우주 졸업을 축하해요!</h2><p><b>${esc(who)}</b> 탐험대원은<br>별의 거리부터 빅뱅까지 모든 행성을 정복했습니다 🎓</p>${first?'<div class="reward">🎁 졸업 보너스 🪙 +100</div>':''}<div class="lrow" style="justify-content:center">${lumi('happy',100)}</div></div><div class="card"><h3>📤 선생님께 제출하기</h3><p class="small">오늘 기록을 선생님께 보내요. 버튼을 눌러 나온 코드를 복사해서 선생님께 보내 주세요.</p><button class="btn ghost" id="sc2" style="margin-top:6px">📋 제출 코드 만들기</button><div id="sx2"></div></div><button class="btn" id="hm">🗺️ 지도로 돌아가기</button>`;
+    document.getElementById('sc2').onclick=()=>showCode(document.getElementById('sx2'));document.getElementById('hm').onclick=home;scrollTo(0,0);return;}
+  const stars=Q.wrong===0?3:Q.wrong<=2?2:1,old=S.stars[s];let bonus=0;
+  if(old===0)bonus+=30;if(stars===3&&old<3)bonus+=20;
+  S.stars[s]=Math.max(old,stars);S.unlocked=Math.max(S.unlocked,s+2);S.coins+=bonus;save();
+  app.innerHTML=`<div class="center">${lumi('happy',110)}<h2 class="jua" style="font-size:28px;margin-top:6px">${ST[s].n} 탐험 성공! 🎉</h2><div class="bigstars">${'★'.repeat(stars)+'☆'.repeat(3-stars)}</div><p class="small">오답 ${Q.wrong}번 · ${stars===3?'완벽해요!':stars===2?'아주 잘했어요!':'다음엔 별 3개에 도전!'}</p>${bonus?`<div class="reward">🎁 행성 클리어 보너스 🪙 +${bonus}</div>`:''}</div>
+  <div class="card"><h3>📌 오늘 얻은 지식</h3><p>${ST[s].sum}</p></div>
+  <div class="card"><h3>📤 선생님께 제출하기</h3><p class="small">오늘 기록을 선생님께 보내요. 버튼을 눌러 나온 코드를 복사해서 선생님께 보내 주세요.</p><button class="btn ghost" id="sc2" style="margin-top:6px">📋 제출 코드 만들기</button><div id="sx2"></div></div>
+  <button class="btn" id="go">${s<4?'다음 행성으로 🚀':'지도로 가서 졸업 시험 도전 🏅'}</button><button class="btn ghost" id="hm">🗺️ 지도로</button>`;
+  document.getElementById('sc2').onclick=()=>showCode(document.getElementById('sx2'));document.getElementById('go').onclick=()=>s<4?stage(s+1,0):home();document.getElementById('hm').onclick=home;scrollTo(0,0);
+}
+
+if(location.hash==='#teacher'){entry();document.getElementById('e2').click();}else S.profile?home():entry();
+</script>
+</body>
+</html>
