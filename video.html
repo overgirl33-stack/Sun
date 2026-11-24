@@ -26,7 +26,7 @@ a{color:#7fffd4}
 <h1>🚀 별빛 탐험대 · 3분 우주 여행</h1>
 <p class="sub">루미가 목소리로 설명해 줘요 (음성 해설 영상)</p>
 <div class="box">
-  <video id="v" src="/lesson.mp4" preload="metadata" playsinline></video>
+  <video id="v" src="lesson.mp4" preload="metadata" playsinline></video>
   <div class="cover" id="cv"><button>▶ 음성 해설과 함께 보기</button></div>
 </div>
 <div class="bar">
@@ -37,7 +37,7 @@ a{color:#7fffd4}
   <select id="rt" aria-label="말 빠르기"><option value="1">보통 속도</option><option value="1.15" selected>조금 빠르게</option><option value="0.9">천천히</option></select>
 </div>
 <div class="now" id="now">▶ 버튼을 누르면 시작해요.</div>
-<p class="note" id="nt">음성은 이 기기의 한국어 음성으로 읽어요. 소리가 안 나면 기기 음량을 확인하거나 크롬·엣지·사파리 최신 버전에서 열어 주세요. · <a href="/guide">수업 안내</a> · <a href="/">탐험 시작</a></p>
+<p class="note" id="nt">음성은 이 기기의 한국어 음성으로 읽어요. 소리가 안 나면 기기 음량을 확인하거나 크롬·엣지·사파리 최신 버전에서 열어 주세요. · <a href="guide.html">수업 안내</a> · <a href="./">탐험 시작</a></p>
 <script>
 const L=[
 [5.0,'안녕! 나는 우주 탐험가 루미야. 다섯 행성으로 출발!'],
@@ -70,7 +70,7 @@ v.addEventListener('timeupdate',()=>{const t=v.currentTime;while(idx<L.length&&L
 v.addEventListener('seeked',()=>{ss&&ss.cancel();sync();});
 v.addEventListener('pause',()=>{ss&&ss.pause();pp.textContent='▶ 재생';});
 v.addEventListener('play',()=>{ss&&ss.resume();pp.textContent='⏸ 일시정지';});
-v.addEventListener('ended',()=>{now.innerHTML='🎉 끝! <a href="/">퀴즈 관문에 도전하러 가기</a>';});
+v.addEventListener('ended',()=>{now.innerHTML='🎉 끝! <a href="./">퀴즈 관문에 도전하러 가기</a>';});
 const pp=document.getElementById('pp');pp.onclick=()=>v.paused?v.play():v.pause();
 document.getElementById('cv').onclick=()=>{document.getElementById('cv').remove();if(ss){const u=new SpeechSynthesisUtterance(' ');ss.speak(u);}v.volume=.35;v.play();};
 document.getElementById('vo').onclick=e=>{voiceOn=!voiceOn;e.target.classList.toggle('on',voiceOn);e.target.textContent=voiceOn?'🔊 음성 해설 켬':'🔇 음성 해설 끔';if(!voiceOn)ss.cancel();};
