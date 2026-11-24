@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>별빛 탐험대 · 3분 우주 여행 (음성 해설)</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#1b2670,#050718 70%);color:#eef2ff;font-family:'Noto Sans KR',sans-serif;display:flex;flex-direction:column;align-items:center;padding:24px 14px;box-sizing:border-box}
+h1{font-family:'Jua';font-weight:400;color:#ffd54a;font-size:clamp(26px,4vw,40px);margin:6px 0 4px;text-align:center}
+p.sub{color:#a9b6e8;margin:0 0 18px;text-align:center}
+.box{width:100%;max-width:960px;position:relative;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(140,160,255,.2)}
+video{width:100%;display:block;background:#000}
+.cover{position:absolute;inset:0;display:grid;place-items:center;background:rgba(4,6,26,.55);cursor:pointer}
+.cover button{font:700 22px 'Noto Sans KR';padding:18px 30px;border:0;border-radius:18px;background:linear-gradient(180deg,#ffe27a,#ffb82e);color:#2a1d00;box-shadow:0 8px 30px rgba(255,184,46,.4);cursor:pointer}
+.bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:16px}
+.bar button,.bar select{font:700 15px 'Noto Sans KR';padding:10px 16px;border-radius:12px;border:1px solid rgba(140,160,255,.3);background:#141c4d;color:#fff;cursor:pointer}
+.bar button.on{background:#3b3410;border-color:#ffd54a}
+.now{max-width:960px;width:100%;margin-top:14px;padding:12px 16px;border-radius:14px;background:rgba(20,28,80,.6);border:1px dashed rgba(140,160,255,.3);min-height:24px;font-size:17px}
+.now b{color:#ffd54a}
+.note{color:#a9b6e8;font-size:13px;margin-top:12px;text-align:center;max-width:720px}
+a{color:#7fffd4}
+</style>
+</head>
+<body>
+<h1>🚀 별빛 탐험대 · 3분 우주 여행</h1>
+<p class="sub">루미가 목소리로 설명해 줘요 (음성 해설 영상)</p>
+<div class="box">
+  <video id="v" src="/lesson.mp4" preload="metadata" playsinline></video>
+  <div class="cover" id="cv"><button>▶ 음성 해설과 함께 보기</button></div>
+</div>
+<div class="bar">
+  <button id="pp">⏸ 일시정지</button>
+  <button id="vo" class="on">🔊 음성 해설 켬</button>
+  <button id="mu">🎵 배경음악 켬</button>
+  <select id="vs" aria-label="목소리 선택"></select>
+  <select id="rt" aria-label="말 빠르기"><option value="1">보통 속도</option><option value="1.15" selected>조금 빠르게</option><option value="0.9">천천히</option></select>
+</div>
+<div class="now" id="now">▶ 버튼을 누르면 시작해요.</div>
+<p class="note" id="nt">음성은 이 기기의 한국어 음성으로 읽어요. 소리가 안 나면 기기 음량을 확인하거나 크롬·엣지·사파리 최신 버전에서 열어 주세요. · <a href="/guide">수업 안내</a> · <a href="/">탐험 시작</a></p>
+<script>
+const L=[
+[5.0,'안녕! 나는 우주 탐험가 루미야. 다섯 행성으로 출발!'],
+[10.4,'한쪽 눈씩 번갈아 감아 봐! 엄지가 움직여 보이지? 이게 바로 시차야.'],
+[19.4,'지구가 6개월 동안 이동하면 가까운 별이 흔들려 보여. 그 각도의 절반이 연주시차!'],
+[27.0,'시차가 클수록 가까운 별! 시차가 0.5초면, 거리는 1 나누기 0.5, 2 파섹이야.'],
+[36.4,'손전등도 멀리서 보면 어둡지? 별도 멀수록 어두워.'],
+[43.2,'거리가 2배가 되면 빛이 4칸으로 퍼져서, 밝기는 4분의 1!'],
+[49.2,'3배면 9칸, 밝기는 9분의 1. 밝기는 거리의 제곱에 반비례해!'],
+[58.4,'1등급은 6등급보다 100배 밝아. 숫자가 작을수록 밝은 별이야!'],
+[67.4,'태양이 제일 밝아 보이는 건, 가장 가까워서야.'],
+[75.0,'모두 10파섹에 세우면 리겔이 1등! 이게 절대등급이야.'],
+[84.6,'성운은 가스와 먼지 구름이야.'],
+[88.2,'산개 성단은 젊고 푸른 별들의 무리!'],
+[91.8,'구상 성단은 늙은 별 수십만 개가 공처럼 모여 있어.'],
+[95.4,'은하는 별 수천억 개! 우리 태양계는 우리은하의 나선팔에 있어.'],
+[100.6,'138억 년 전, 뜨겁고 작은 한 점에서 우주가 팽창하기 시작했어!'],
+[111.4,'분홍 화살표를 봐. 먼 은하일수록 더 많이 멀어지지?'],
+[118.0,'허블이 발견한 이 사실이 바로 빅뱅의 증거야!'],
+[128.2,'학번이랑 이름만 쓰면 바로 출발! 우주에서 만나자!']];
+const v=document.getElementById('v'),now=document.getElementById('now'),ss=window.speechSynthesis;
+let voiceOn=!!ss,idx=0,voice=null;
+const vs=document.getElementById('vs'),rt=document.getElementById('rt');
+function loadVoices(){if(!ss)return;const all=ss.getVoices().filter(x=>/^ko/i.test(x.lang));vs.innerHTML=all.map((x,i)=>`<option value="${i}">${x.name.replace(/Microsoft |Google |Online \(Natural\) - Korean \(Korea\)/g,'').slice(0,30)}</option>`).join('')||'<option>기본 한국어 음성</option>';
+ const pref=all.findIndex(x=>/Natural|Online|SunHi|InJoon|Google/i.test(x.name));voice=all[pref>=0?pref:0]||null;if(pref>=0)vs.value=pref;vs.onchange=()=>{voice=all[+vs.value]||null;};}
+if(ss){loadVoices();ss.onvoiceschanged=loadVoices;}else{document.getElementById('vo').textContent='🔇 이 브라우저는 음성 미지원';document.getElementById('vo').disabled=true;voiceOn=false;}
+function say(s){if(!voiceOn||!ss)return;ss.cancel();const u=new SpeechSynthesisUtterance(s);u.lang='ko-KR';if(voice)u.voice=voice;u.rate=+rt.value;u.pitch=1.15;ss.speak(u);}
+function sync(){const t=v.currentTime;let j=0;while(j<L.length&&L[j][0]<=t)j++;idx=j;}
+v.addEventListener('timeupdate',()=>{const t=v.currentTime;while(idx<L.length&&L[idx][0]<=t){if(t-L[idx][0]<1.5){say(L[idx][1]);now.innerHTML='<b>루미</b> '+L[idx][1];}idx++;}});
+v.addEventListener('seeked',()=>{ss&&ss.cancel();sync();});
+v.addEventListener('pause',()=>{ss&&ss.pause();pp.textContent='▶ 재생';});
+v.addEventListener('play',()=>{ss&&ss.resume();pp.textContent='⏸ 일시정지';});
+v.addEventListener('ended',()=>{now.innerHTML='🎉 끝! <a href="/">퀴즈 관문에 도전하러 가기</a>';});
+const pp=document.getElementById('pp');pp.onclick=()=>v.paused?v.play():v.pause();
+document.getElementById('cv').onclick=()=>{document.getElementById('cv').remove();if(ss){const u=new SpeechSynthesisUtterance(' ');ss.speak(u);}v.volume=.35;v.play();};
+document.getElementById('vo').onclick=e=>{voiceOn=!voiceOn;e.target.classList.toggle('on',voiceOn);e.target.textContent=voiceOn?'🔊 음성 해설 켬':'🔇 음성 해설 끔';if(!voiceOn)ss.cancel();};
+document.getElementById('mu').onclick=e=>{v.muted=!v.muted;e.target.textContent=v.muted?'🎵 배경음악 끔':'🎵 배경음악 켬';};
+</script>
+</body>
+</html>
