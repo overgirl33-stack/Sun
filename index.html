@@ -144,8 +144,8 @@ input.sq{display:block;width:100%;padding:10px 12px;border-radius:12px;border:2p
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 /* ---------- Firebase 설정 (공개되어도 안전한 웹 설정값. 비밀번호는 여기에 없어요) ---------- */
-const FB_CONFIG={apiKey:"",authDomain:"",databaseURL:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:""};
-const TEACHER_EMAIL="";   /* Firebase Authentication에 만든 교사 계정 이메일 (비밀번호는 Firebase에만 저장) */
+const FB_CONFIG={apiKey:"AIzaSyDyxXuWn9TKC7rgdEZczkXcchTQI6wD7eE",authDomain:"byeolbit-quest.firebaseapp.com",databaseURL:"https://byeolbit-quest-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"byeolbit-quest",storageBucket:"byeolbit-quest.firebasestorage.app",messagingSenderId:"791502433595",appId:"1:791502433595:web:67f69afc96171b01d31b1e"};
+const TEACHER_EMAIL="mschoi1203@icedu.kr";   /* Firebase Authentication에 만든 교사 계정 이메일 (비밀번호는 Firebase에만 저장) */
 
 /* ---------- 유틸 ---------- */
 const app=document.getElementById('app');
@@ -616,7 +616,9 @@ function gate(){
   stopT();
   app.innerHTML=`<div class="top"><button class="back" id="bk">← 뒤로</button><div class="jua" style="font-size:18px">👩‍🏫 교사 모드</div><div style="width:48px"></div></div>
   <div class="card center"><div style="font-size:44px">🔒</div><h3>교사 비밀번호</h3><p class="small">비밀번호를 입력해야 학생 기록을 볼 수 있어요.</p>
-  <input class="sq" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" style="text-align:center;margin-top:10px"><div class="err" id="er"></div><button class="btn" id="gi">입장하기</button></div>`;
+  <input class="sq" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" style="text-align:center;margin-top:10px"><div class="err" id="er"></div><button class="btn" id="gi">입장하기</button>
+  <details style="margin-top:12px;text-align:left"><summary>처음이세요? 교사 비밀번호 만들기</summary><p class="small">처음 한 번만 비밀번호를 정해요(6자 이상). 위 칸에 원하는 비밀번호를 쓰고 아래 버튼을 누르세요.</p><input class="sq" id="pw2" type="password" autocomplete="new-password" placeholder="비밀번호 한 번 더"><button class="btn ghost" id="gc">비밀번호 만들고 입장</button></details>
+  <button class="reset" id="gf">비밀번호를 잊었어요</button></div>`;
   document.getElementById('bk').onclick=entry;
   const er=document.getElementById('er'),pw=document.getElementById('pw'),gi=document.getElementById('gi');
   const go=async()=>{
@@ -635,6 +637,21 @@ function gate(){
     }
   };
   gi.onclick=go;pw.onkeydown=e=>{if(e.key==='Enter')go();};
+  const prep=async()=>{if(!TAPP){TAPP=firebase.initializeApp(FB_CONFIG,'teacher');TAUTH=firebase.auth(TAPP);await TAUTH.setPersistence(firebase.auth.Auth.Persistence.NONE);}TAUTH=firebase.auth(TAPP);TDB=firebase.database(TAPP);};
+  document.getElementById('gc').onclick=async()=>{
+    const a=pw.value,b=document.getElementById('pw2').value;
+    if(!FB_READY()){er.textContent='인터넷 연결을 확인해 주세요.';return;}
+    if(a.length<6){er.textContent='비밀번호는 6자 이상이어야 해요.';return;}
+    if(a!==b){er.textContent='두 비밀번호가 서로 달라요.';return;}
+    er.textContent='만드는 중…';
+    try{await prep();await TAUTH.createUserWithEmailAndPassword(TEACHER_EMAIL,a);pw.value='';teacher();}
+    catch(e){const c=(e&&e.code)||'';TDB=null;er.textContent=c==='auth/email-already-in-use'?'이미 비밀번호가 만들어져 있어요. 위에서 입장하거나 "비밀번호를 잊었어요"를 눌러 주세요.':c==='auth/weak-password'?'더 어려운 비밀번호로 해 주세요(6자 이상).':'만들기 오류: '+(c||'알 수 없음');}
+  };
+  document.getElementById('gf').onclick=async()=>{
+    if(!FB_READY())return;
+    try{await prep();await TAUTH.sendPasswordResetEmail(TEACHER_EMAIL);er.textContent='교사 이메일로 비밀번호 재설정 메일을 보냈어요.';}
+    catch(e){er.textContent='메일 보내기 실패: '+((e&&e.code)||'알 수 없음');}
+  };
   scrollTo(0,0);
 }
 
